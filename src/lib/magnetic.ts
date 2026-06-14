@@ -1,19 +1,17 @@
-import { useEffect, useRef } from 'react'
 import { gsap } from '@/lib/gsap'
-import { useReducedMotion } from '@/lib/useReducedMotion'
 
 /**
- * Magnetic hover: the element eases toward the pointer while hovered, springs
- * back on leave. No-op for reduced-motion and (effectively) touch.
+ * Attaches magnetic-hover behaviour to every [data-magnetic] under `root`.
+ * The element eases toward the pointer while hovered and springs back on leave.
+ * Returns a cleanup that removes all listeners and resets transforms.
+ *
+ * No-op-safe: callers must skip this under reduced motion / coarse pointers.
  */
-export function useMagnetic<T extends HTMLElement = HTMLElement>(strength = 0.35) {
-  const ref = useRef<T>(null)
-  const reduced = useReducedMotion()
+export function initMagnetics(root: ParentNode = document, strength = 0.4): () => void {
+  const els = Array.from(root.querySelectorAll<HTMLElement>('[data-magnetic]'))
+  const cleanups: Array<() => void> = []
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el || reduced) return
-
+  els.forEach((el) => {
     const xTo = gsap.quickTo(el, 'x', { duration: 0.5, ease: 'power3' })
     const yTo = gsap.quickTo(el, 'y', { duration: 0.5, ease: 'power3' })
 
@@ -29,13 +27,13 @@ export function useMagnetic<T extends HTMLElement = HTMLElement>(strength = 0.35
 
     el.addEventListener('mousemove', onMove)
     el.addEventListener('mouseleave', onLeave)
-    return () => {
+    cleanups.push(() => {
       el.removeEventListener('mousemove', onMove)
       el.removeEventListener('mouseleave', onLeave)
       gsap.killTweensOf(el)
       gsap.set(el, { x: 0, y: 0 })
-    }
-  }, [reduced, strength])
+    })
+  })
 
-  return ref
+  return () => cleanups.forEach((fn) => fn())
 }

@@ -49,9 +49,9 @@ We'll know we're right when **the site is live at the root user-site URL, passes
 
 | # | Milestone | Outcome | Status | Plan |
 |---|---|---|---|---|
-| 1 | Foundation & design system | Repo scaffolded; tokens, self-hosted fonts, smooth-scroll wired; blank app boots | in-progress | — |
-| 2 | Static content shell | All sections render with real, accurate content and look intentional with zero motion | pending | — |
-| 3 | Motion & 3D layer | Preloader, hero scramble + security graph, scroll choreography, work gallery, marquee, counters, terminal, footer CTA | pending | — |
+| 1 | Foundation & design system | Repo scaffolded; tokens, self-hosted fonts, smooth-scroll wired; blank app boots | complete | — |
+| 2 | Static content shell | All sections render with real, accurate content and look intentional with zero motion | complete | — |
+| 3 | Motion & 3D layer | Preloader, hero scramble + security graph, scroll choreography, work gallery, marquee, counters, terminal, footer CTA | complete | — |
 | 4 | Polish pass | Spacing/rhythm, hover & focus states, empty/edge states, mobile refinement | pending | — |
 | 5 | A11y, reduced-motion & performance | Reduced-motion path complete; Lighthouse targets met; 3D lazy/throttled | pending | — |
 | 6 | Ship gates | react-review, security-review, quality-gate, build-fix, verify all green | pending | — |
@@ -74,4 +74,4 @@ We'll know we're right when **the site is live at the root user-site URL, passes
 | Scope creep across 8 milestones | Med | Med | Checkpoint (commit) per milestone; static-first before motion |
 
 ---
-*Status: DRAFT → ACCEPTED for build. Requirements locked via clarification on 2026-06-14. Milestone 1 in progress.*
+*Status: DRAFT → ACCEPTED for build. Requirements locked via clarification on 2026-06-14. Milestones 1–3 complete; Milestone 4 (polish) next.*

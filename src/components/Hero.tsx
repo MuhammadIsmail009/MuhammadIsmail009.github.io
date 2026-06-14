@@ -1,7 +1,14 @@
+import { Suspense, lazy, useRef } from 'react'
 import { SITE } from '@/lib/content'
 import { ButtonLink } from '@/components/ui'
+import { gsap, useGSAP, EASE } from '@/lib/gsap'
+import { useReducedMotion } from '@/lib/useReducedMotion'
+import { useMotionReady } from '@/lib/motionReady'
 
-// Hand-placed constellation — the static fallback for the R3F security graph.
+const HeroScene = lazy(() => import('@/components/HeroScene'))
+
+// Hand-placed constellation — the static fallback for the R3F security graph
+// (shown during preload, under reduced motion, and as the Suspense fallback).
 const NODES: [number, number][] = [
   [820, 150], [675, 115], [905, 300], [760, 270], [600, 235],
   [705, 420], [860, 455], [560, 395], [640, 560], [800, 615],
@@ -49,39 +56,83 @@ function HeroBackdrop() {
 }
 
 export function Hero() {
+  const reduced = useReducedMotion()
+  const ready = useMotionReady()
+  const root = useRef<HTMLElement>(null)
+
+  useGSAP(
+    () => {
+      if (reduced) return
+      const q = gsap.utils.selector(root)
+
+      // Prep — hidden behind the preloader curtain.
+      gsap.set(q('[data-hero-word]'), { yPercent: 115 })
+      gsap.set(q('[data-hero-fade]'), { opacity: 0, y: 22 })
+      gsap.set(q('[data-hero-kicker]'), { opacity: 0 })
+
+      if (!ready) return
+
+      const tl = gsap.timeline({ defaults: { ease: EASE.expo } })
+      tl.to(q('[data-hero-word]'), { yPercent: 0, duration: 1.1, stagger: 0.12 })
+        .to(q('[data-hero-kicker]'), { opacity: 1, duration: 0.1 }, 0.2)
+        .to(
+          q('[data-hero-kicker]'),
+          {
+            duration: 1.3,
+            ease: 'none',
+            scrambleText: { text: SITE.kicker, chars: 'upperCase', speed: 0.7, revealDelay: 0.2 },
+          },
+          0.2,
+        )
+        .to(q('[data-hero-fade]'), { opacity: 1, y: 0, duration: 0.9, stagger: 0.12 }, '-=0.9')
+    },
+    { scope: root, dependencies: [ready, reduced] },
+  )
+
   return (
     <section
+      ref={root}
       id="hero"
       className="relative flex min-h-[100svh] items-center overflow-hidden px-gutter pb-24 pt-32"
     >
-      {/* 3D scene mounts here in M3; SVG graph is the fallback. */}
+      {/* SVG fallback until the 3D scene is ready; reduced motion keeps it. */}
       <div data-hero-scene className="absolute inset-0">
-        <HeroBackdrop />
+        {reduced || !ready ? (
+          <HeroBackdrop />
+        ) : (
+          <Suspense fallback={<HeroBackdrop />}>
+            <HeroScene />
+          </Suspense>
+        )}
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-content">
-        <p className="kicker mb-7 flex items-center gap-3" data-reveal>
+        <p className="kicker mb-7 flex items-center gap-3">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
-          {SITE.kicker}
+          <span data-hero-kicker>{SITE.kicker}</span>
         </p>
 
         <h1 className="font-display text-display-xl font-semibold text-fg">
-          <span data-hero-word className="block">
-            Muhammad
+          <span className="block overflow-hidden">
+            <span data-hero-word className="block">
+              Muhammad
+            </span>
           </span>
-          <span data-hero-word className="block text-accent text-glow">
-            Ismail
+          <span className="block overflow-hidden">
+            <span data-hero-word className="block text-accent text-glow">
+              Ismail
+            </span>
           </span>
         </h1>
 
         <p
           className="mt-8 max-w-prose2 text-pretty text-lg leading-relaxed text-muted sm:text-xl"
-          data-reveal
+          data-hero-fade
         >
           {SITE.tagline}
         </p>
 
-        <div className="mt-11 flex flex-wrap items-center gap-4" data-reveal>
+        <div className="mt-11 flex flex-wrap items-center gap-4" data-hero-fade>
           <ButtonLink href="#work" variant="primary">
             View Work
           </ButtonLink>

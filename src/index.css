@@ -144,6 +144,16 @@
   }
 }
 
+/* Nav condenses once scrolled past the hero (toggled by MotionLayer). */
+[data-nav] > nav {
+  transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+}
+[data-nav].is-scrolled > nav {
+  background: rgb(var(--bg-elevated) / 0.78);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

@@ -1,0 +1,10 @@
+# Normalize line endings — silence CRLF warnings on Windows checkouts.
+* text=auto eol=lf
+
+# Binary assets
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.ico binary
+*.webp binary
+*.avif binary
