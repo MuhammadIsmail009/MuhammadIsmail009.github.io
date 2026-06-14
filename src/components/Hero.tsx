@@ -88,6 +88,7 @@ export function Hero() {
       gsap.set(q('[data-hero-word]'), { yPercent: 115 })
       gsap.set(q('[data-hero-fade]'), { opacity: 0, y: 22 })
       gsap.set(q('[data-hero-kicker]'), { opacity: 0 })
+      gsap.set(q('[data-tag-red], [data-tag-blue]'), { opacity: 0 })
 
       if (!ready) return
 
@@ -103,7 +104,28 @@ export function Hero() {
           },
           0.2,
         )
-        .to(q('[data-hero-fade]'), { opacity: 1, y: 0, duration: 0.9, stagger: 0.12 }, '-=0.9')
+        // Punchline: decode each half in sequence (red side, then blue side).
+        .to(q('[data-tag-red]'), { opacity: 1, duration: 0.1 }, '-=0.55')
+        .to(
+          q('[data-tag-red]'),
+          {
+            duration: 0.7,
+            ease: 'none',
+            scrambleText: { text: SITE.taglineRed, chars: '!<>-_\\/[]{}=+*^?#', speed: 0.9 },
+          },
+          '<',
+        )
+        .to(q('[data-tag-blue]'), { opacity: 1, duration: 0.1 }, '-=0.35')
+        .to(
+          q('[data-tag-blue]'),
+          {
+            duration: 0.7,
+            ease: 'none',
+            scrambleText: { text: SITE.taglineBlue, chars: '!<>-_\\/[]{}=+*^?#', speed: 0.9 },
+          },
+          '<',
+        )
+        .to(q('[data-hero-fade]'), { opacity: 1, y: 0, duration: 0.9, stagger: 0.12 }, '-=0.5')
     },
     { scope: root, dependencies: [ready, reduced] },
   )
@@ -141,17 +163,19 @@ export function Hero() {
             </span>
           </span>
           <span className="block overflow-hidden">
-            <span data-hero-word className="block text-accent text-glow">
+            <span data-hero-word className="glitch-soft block text-accent text-glow">
               Ismail
             </span>
           </span>
         </h1>
 
-        <p
-          className="mt-8 max-w-prose2 text-pretty text-lg leading-relaxed text-muted sm:text-xl"
-          data-hero-fade
-        >
-          {SITE.tagline}
+        <p className="mt-8 max-w-prose2 font-display text-2xl font-medium leading-[1.12] tracking-tight sm:text-3xl">
+          <span data-tag-red className="text-accent text-glow">
+            {SITE.taglineRed}
+          </span>{' '}
+          <span data-tag-blue className="text-data" style={{ textShadow: '0 0 22px rgb(90 200 190 / 0.4)' }}>
+            {SITE.taglineBlue}
+          </span>
         </p>
 
         <div className="mt-11 flex flex-wrap items-center gap-4" data-hero-fade>

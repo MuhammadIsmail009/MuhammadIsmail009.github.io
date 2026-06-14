@@ -26,7 +26,7 @@ export function Footer() {
 
         <h2
           className="max-w-[18ch] font-display text-display-lg font-semibold leading-[0.98] tracking-tight text-fg"
-          data-reveal
+          data-split
         >
           {CTA.headline}
         </h2>

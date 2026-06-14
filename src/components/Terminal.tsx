@@ -79,14 +79,14 @@ export function Terminal() {
       />
 
       <div
-        className="overflow-hidden rounded-xl border border-hairline bg-[#0c0c0e] font-mono text-sm shadow-2xl shadow-black/40"
+        className="scanlines relative overflow-hidden rounded-xl border border-hairline bg-[#0c0b0a] font-mono text-sm shadow-2xl shadow-black/40"
         data-reveal
       >
-        <div className="flex items-center gap-2 border-b border-hairline px-4 py-3">
+        <div className="relative z-[2] flex items-center gap-2 border-b border-hairline px-4 py-3">
           <span className="h-3 w-3 rounded-full bg-[#ff5f57]/80" />
           <span className="h-3 w-3 rounded-full bg-[#febc2e]/80" />
           <span className="h-3 w-3 rounded-full bg-[#28c840]/80" />
-          <span className="ml-3 text-xs text-faint">kryptctl — interactive shell</span>
+          <span className="glitch ml-3 text-xs text-faint">kryptctl — interactive shell</span>
         </div>
 
         <div

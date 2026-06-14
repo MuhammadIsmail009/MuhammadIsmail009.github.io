@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { gsap, useGSAP, ScrollTrigger, EASE } from '@/lib/gsap'
+import { gsap, useGSAP, ScrollTrigger, SplitText, EASE } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { initMagnetics } from '@/lib/magnetic'
 import { NAV } from '@/lib/content'
@@ -66,25 +66,48 @@ export function MotionLayer({ ready }: { ready: boolean }) {
 
       // Prep: hide everything we're about to reveal. Done on every run so the
       // hidden state is in place behind the preloader curtain before it lifts.
-      gsap.set('[data-reveal]', { opacity: 0, y: 28 })
+      // Headings ([data-split]) are handled by the line reveal below.
+      gsap.set('[data-reveal]:not([data-split])', { opacity: 0, y: 36 })
       gsap.set('[data-work-card]', { opacity: 0, y: 48 })
+      gsap.set('[data-split]', { opacity: 0 })
 
       if (!ready) return
 
       buildNavState()
 
-      ScrollTrigger.batch('[data-reveal]', {
+      ScrollTrigger.batch('[data-reveal]:not([data-split])', {
         start: 'top 88%',
         onEnter: (els) =>
           gsap.to(els, {
             opacity: 1,
             y: 0,
-            duration: 0.9,
+            duration: 1,
             ease: EASE.expo,
-            stagger: 0.09,
+            stagger: 0.1,
             overwrite: true,
           }),
       })
+
+      // Heading reveals — split into lines and slide each up from behind a mask.
+      // autoSplit re-splits once fonts/width settle so the line breaks are right.
+      const splits = gsap.utils.toArray<HTMLElement>('[data-split]').map((el) =>
+        SplitText.create(el, {
+          type: 'lines',
+          mask: 'lines',
+          autoSplit: true,
+          linesClass: 'split-line',
+          onSplit(self) {
+            gsap.set(el, { opacity: 1 })
+            return gsap.from(self.lines, {
+              yPercent: 115,
+              duration: 1.1,
+              ease: EASE.expo,
+              stagger: 0.12,
+              scrollTrigger: { trigger: el, start: 'top 86%', once: true },
+            })
+          },
+        }),
+      )
 
       ScrollTrigger.batch('[data-work-card]', {
         start: 'top 92%',
@@ -123,6 +146,9 @@ export function MotionLayer({ ready }: { ready: boolean }) {
             }),
         })
       })
+
+      // Revert SplitText DOM wrapping on cleanup (re-runs are deps-driven only).
+      return () => splits.forEach((s) => s.revert())
     },
     { dependencies: [ready, reduced] },
   )

@@ -6,15 +6,16 @@ import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
+import { SplitText } from 'gsap/SplitText'
 
-gsap.registerPlugin(useGSAP, ScrollTrigger, ScrambleTextPlugin)
+gsap.registerPlugin(useGSAP, ScrollTrigger, ScrambleTextPlugin, SplitText)
 
 gsap.defaults({ ease: 'power3.out', duration: 0.9 })
 
 // Custom expo ease used across reveals.
 gsap.config({ nullTargetWarn: false })
 
-export { gsap, useGSAP, ScrollTrigger, ScrambleTextPlugin }
+export { gsap, useGSAP, ScrollTrigger, ScrambleTextPlugin, SplitText }
 
 export const EASE = {
   expo: 'expo.out',

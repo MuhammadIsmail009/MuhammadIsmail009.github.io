@@ -38,7 +38,7 @@ export function SectionHeader({
       </div>
       <h2
         className="mt-6 max-w-prose2 font-display text-display-md font-semibold tracking-tight text-fg"
-        data-reveal
+        data-split
       >
         {title}
       </h2>

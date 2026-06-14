@@ -1,5 +1,6 @@
 import { ABOUT } from '@/lib/content'
 import { Section } from '@/components/ui'
+import { HackerArt } from '@/components/HackerArt'
 
 export function About() {
   return (
@@ -12,10 +13,13 @@ export function About() {
           </div>
           <h2
             className="mt-8 font-display text-display-md font-semibold leading-[1.05] tracking-tight text-fg"
-            data-reveal
+            data-split
           >
             {ABOUT.lead}
           </h2>
+          <div className="mt-12 flex justify-center lg:mt-16 lg:justify-start" data-reveal>
+            <HackerArt />
+          </div>
         </div>
 
         <div className="lg:col-span-7 lg:pt-16">

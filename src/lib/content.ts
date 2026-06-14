@@ -10,8 +10,10 @@ export const SITE = {
   lastName: 'Ismail',
   role: 'Cybersecurity Engineer',
   kicker: 'Cybersecurity Engineer · SOC & Detection Engineering',
-  tagline:
-    'I build systems that watch the systems — detection engineering, SOC automation, and security that holds under pressure.',
+  tagline: "Attacker's mindset. Defender's discipline.",
+  // Two halves, colour-coded red-team (warm) / blue-team (cool) in the hero.
+  taglineRed: "Attacker's mindset.",
+  taglineBlue: "Defender's discipline.",
   url: 'https://muhammadismail009.github.io/',
   location: 'Pakistan',
 } as const
@@ -77,7 +79,7 @@ export const PROJECTS: Project[] = [
     description:
       'Deep Reinforcement Learning (DQN) for artificial-noise power allocation in physical-layer security (MISO wiretap channel, imperfect CSI). The agent outperforms a classical optimizer under noisy CSI at mid-to-high SNR.',
     tags: ['Python', 'TensorFlow 2', 'NumPy', 'SciPy', 'DRL'],
-    link: PROFILE,
+    link: 'https://github.com/MuhammadIsmail009/pls-dqn-miso',
     linkLabel: 'GitHub',
   },
   {

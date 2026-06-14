@@ -21,8 +21,10 @@ export default {
         accent: {
           DEFAULT: v('--accent'),
           soft: v('--accent-soft'),
+          bright: v('--accent-bright'),
+          deep: v('--accent-deep'),
         },
-        teal: v('--teal'),
+        data: v('--data'),
         hairline: 'rgb(var(--hairline) / 0.08)',
       },
       fontFamily: {
