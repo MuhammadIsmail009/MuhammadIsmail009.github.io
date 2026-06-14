@@ -60,7 +60,20 @@ const run = async () => {
     const ctaVisible = await page.locator('#contact h2').isVisible()
     await page.screenshot({ path: `${OUT}/A-footer.png` })
 
-    results.motion = { canvas, heroH1, ctaVisible, errors }
+    // Terminal robustness: prototype-chain keys must not crash the app.
+    await page.evaluate(() => document.querySelector('#terminal')?.scrollIntoView())
+    const term = page.locator('#term-input')
+    for (const cmd of ['constructor', '__proto__', 'toString', 'hasOwnProperty']) {
+      await term.click()
+      await term.fill(cmd)
+      await term.press('Enter')
+    }
+    await page.waitForTimeout(150)
+    const termAlive = await term.isVisible()
+    const notFound = await page.locator('#terminal').innerText()
+    const termSafe = termAlive && /command not found/.test(notFound)
+
+    results.motion = { canvas, heroH1, ctaVisible, termSafe, errors }
     await ctx.close()
   }
 

@@ -33,7 +33,11 @@ export function Terminal() {
     }
     const next: Line[] = [{ kind: 'in', text: raw }]
     if (cmd) {
-      const found = TERMINAL_COMMANDS[cmd]
+      // Own-property check only — otherwise "constructor", "__proto__", "toString"
+      // etc. resolve to prototype members (truthy) and crash on `.out`.
+      const found = Object.prototype.hasOwnProperty.call(TERMINAL_COMMANDS, cmd)
+        ? TERMINAL_COMMANDS[cmd]
+        : undefined
       if (found) next.push(...found.out.map((text) => ({ kind: 'out' as const, text })))
       else next.push({ kind: 'out', text: `command not found: ${cmd} — try 'help'` })
     }
