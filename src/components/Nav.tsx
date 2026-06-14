@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NAV, CONTACT } from '@/lib/content'
 import { scrollTo } from '@/lib/scroll'
 
@@ -23,6 +23,9 @@ function Monogram() {
 
 export function Nav() {
   const [open, setOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   // lock body scroll while the mobile overlay is open
   useEffect(() => {
@@ -32,10 +35,38 @@ export function Nav() {
     }
   }, [open])
 
-  // close on Escape
+  // Focus management + trap while the overlay is open.
   useEffect(() => {
     if (!open) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+
+    // move focus into the menu
+    menuRef.current?.querySelector<HTMLElement>('a')?.focus()
+
+    const focusables = () =>
+      Array.from(
+        headerRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? [],
+      ).filter((el) => el.offsetParent !== null)
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        toggleRef.current?.focus()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const items = focusables()
+      if (!items.length) return
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
@@ -46,7 +77,7 @@ export function Nav() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[100] px-gutter pt-3 sm:pt-4" data-nav>
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-[100] px-gutter pt-3 sm:pt-4" data-nav>
       <nav
         className="glass mx-auto flex max-w-content items-center justify-between rounded-full px-4 py-2.5 sm:px-6 sm:py-3"
         aria-label="Primary"
@@ -81,6 +112,7 @@ export function Nav() {
         </a>
 
         <button
+          ref={toggleRef}
           type="button"
           onClick={() => setOpen((o) => !o)}
           className="flex h-9 w-9 items-center justify-center md:hidden"
@@ -110,7 +142,9 @@ export function Nav() {
 
       {/* Mobile full-screen overlay */}
       <div
+        ref={menuRef}
         id="mobile-menu"
+        aria-hidden={!open}
         className={`fixed inset-0 z-[-1] flex flex-col justify-center bg-canvas px-gutter transition-opacity duration-500 md:hidden ${
           open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
         }`}
@@ -120,6 +154,7 @@ export function Nav() {
             <li key={n.href}>
               <a
                 href={n.href}
+                tabIndex={open ? 0 : -1}
                 onClick={(e) => {
                   e.preventDefault()
                   go(n.href)
@@ -134,7 +169,8 @@ export function Nav() {
         </ul>
         <a
           href={`mailto:${CONTACT.email}`}
-          className="mt-12 font-mono text-sm text-muted"
+          tabIndex={open ? 0 : -1}
+          className="mt-12 font-mono text-sm text-muted transition-colors hover:text-accent"
         >
           {CONTACT.email}
         </a>

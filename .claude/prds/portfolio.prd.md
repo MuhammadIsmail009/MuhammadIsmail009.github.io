@@ -52,7 +52,7 @@ We'll know we're right when **the site is live at the root user-site URL, passes
 | 1 | Foundation & design system | Repo scaffolded; tokens, self-hosted fonts, smooth-scroll wired; blank app boots | complete | — |
 | 2 | Static content shell | All sections render with real, accurate content and look intentional with zero motion | complete | — |
 | 3 | Motion & 3D layer | Preloader, hero scramble + security graph, scroll choreography, work gallery, marquee, counters, terminal, footer CTA | complete | — |
-| 4 | Polish pass | Spacing/rhythm, hover & focus states, empty/edge states, mobile refinement | pending | — |
+| 4 | Polish pass | Spacing/rhythm, hover & focus states, empty/edge states, mobile refinement | complete | — |
 | 5 | A11y, reduced-motion & performance | Reduced-motion path complete; Lighthouse targets met; 3D lazy/throttled | pending | — |
 | 6 | Ship gates | react-review, security-review, quality-gate, build-fix, verify all green | pending | — |
 | 7 | Deploy & SEO | Live at user-site root via Actions; OG/favicon/sitemap/robots/JSON-LD present | pending | — |
@@ -74,4 +74,4 @@ We'll know we're right when **the site is live at the root user-site URL, passes
 | Scope creep across 8 milestones | Med | Med | Checkpoint (commit) per milestone; static-first before motion |
 
 ---
-*Status: DRAFT → ACCEPTED for build. Requirements locked via clarification on 2026-06-14. Milestones 1–3 complete; Milestone 4 (polish) next.*
+*Status: DRAFT → ACCEPTED for build. Requirements locked via clarification on 2026-06-14. Milestones 1–4 complete; Milestone 5 (a11y, reduced-motion & performance) next.*

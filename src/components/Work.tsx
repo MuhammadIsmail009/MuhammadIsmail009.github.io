@@ -11,7 +11,8 @@ function WorkCard({ project }: { project: Project }) {
   return (
     <article
       data-work-card
-      className="group relative flex w-[82vw] max-w-[28rem] shrink-0 snap-start flex-col justify-between rounded-2xl border border-hairline bg-surface/40 p-7 transition-colors duration-500 hover:border-accent/40 sm:w-[60vw] md:w-[44vw] lg:w-[28rem]"
+      role="listitem"
+      className="group relative flex w-[82vw] max-w-[28rem] shrink-0 snap-start flex-col justify-between rounded-2xl border border-hairline bg-surface/40 p-7 hover:border-accent/40 sm:w-[60vw] md:w-[44vw] lg:w-[28rem]"
     >
       <div>
         <div className="flex items-start justify-between gap-4">
@@ -68,14 +69,24 @@ export function Work() {
         </div>
       </div>
 
-      <div
-        data-work-track
-        className="mt-14 flex gap-6 overflow-x-auto pb-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={TRACK_PADDING}
-      >
-        {PROJECTS.map((p) => (
-          <WorkCard key={p.id} project={p} />
-        ))}
+      <div className="relative">
+        <div
+          data-work-track
+          role="list"
+          aria-label="Selected work — scroll horizontally to explore"
+          tabIndex={0}
+          className="mt-14 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={TRACK_PADDING}
+        >
+          {PROJECTS.map((p) => (
+            <WorkCard key={p.id} project={p} />
+          ))}
+        </div>
+        {/* affordance: hint that the track continues */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-l from-canvas to-transparent lg:block"
+        />
       </div>
     </section>
   )

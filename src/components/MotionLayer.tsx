@@ -2,6 +2,43 @@ import { useEffect } from 'react'
 import { gsap, useGSAP, ScrollTrigger, EASE } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { initMagnetics } from '@/lib/magnetic'
+import { NAV } from '@/lib/content'
+
+/**
+ * Condense the nav past the hero + scrollspy the active section link. Called
+ * inside the gsap context so the ScrollTriggers it creates are auto-reverted.
+ */
+function buildNavState() {
+  const nav = document.querySelector('[data-nav]')
+  if (!nav) return
+
+  ScrollTrigger.create({
+    start: 0,
+    end: 'max',
+    onUpdate: (self) => nav.classList.toggle('is-scrolled', self.scroll() > 80),
+  })
+
+  const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'))
+  const setActive = (href: string) => {
+    links.forEach((a) => {
+      const on = a.getAttribute('href') === href
+      a.classList.toggle('is-active', on)
+      if (on) a.setAttribute('aria-current', 'true')
+      else a.removeAttribute('aria-current')
+    })
+  }
+
+  NAV.forEach(({ href }) => {
+    const section = document.querySelector(href)
+    if (!section) return
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top center',
+      end: 'bottom center',
+      onToggle: (self) => self.isActive && setActive(href),
+    })
+  })
+}
 
 /**
  * Site-wide scroll choreography. Renders nothing; owns the global motion that
@@ -10,7 +47,7 @@ import { initMagnetics } from '@/lib/magnetic'
  *   - [data-work-card]   → horizontal-track card stagger
  *   - [data-counter]     → count up from 0 when scrolled into view
  *   - [data-magnetic]    → magnetic hover
- *   - [data-nav]         → condensed state once past the hero
+ *   - [data-nav]         → condensed state past the hero + active-link scrollspy
  *
  * Everything is gated on `ready` (preloader done) and fully bypassed under
  * prefers-reduced-motion — the static content is already visible in that path.
@@ -20,7 +57,12 @@ export function MotionLayer({ ready }: { ready: boolean }) {
 
   useGSAP(
     () => {
-      if (reduced) return
+      // Nav state (condense + scrollspy) works on native scroll too, so it runs
+      // even under reduced motion. Hero entrance / reveals are motion-only.
+      if (reduced) {
+        buildNavState()
+        return
+      }
 
       // Prep: hide everything we're about to reveal. Done on every run so the
       // hidden state is in place behind the preloader curtain before it lifts.
@@ -28,6 +70,8 @@ export function MotionLayer({ ready }: { ready: boolean }) {
       gsap.set('[data-work-card]', { opacity: 0, y: 48 })
 
       if (!ready) return
+
+      buildNavState()
 
       ScrollTrigger.batch('[data-reveal]', {
         start: 'top 88%',
@@ -52,6 +96,9 @@ export function MotionLayer({ ready }: { ready: boolean }) {
             ease: EASE.expo,
             stagger: 0.12,
             overwrite: true,
+            // Drop the inline transform once revealed so CSS hover-lift is free
+            // to take over without fighting GSAP's translate.
+            onComplete: () => gsap.set(els, { clearProps: 'transform' }),
           }),
       })
 
@@ -75,14 +122,6 @@ export function MotionLayer({ ready }: { ready: boolean }) {
               },
             }),
         })
-      })
-
-      // Nav condenses once we've left the hero.
-      const nav = document.querySelector('[data-nav]')
-      ScrollTrigger.create({
-        start: 0,
-        end: 'max',
-        onUpdate: (self) => nav?.classList.toggle('is-scrolled', self.scroll() > 80),
       })
 
       ScrollTrigger.refresh()

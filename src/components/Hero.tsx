@@ -145,7 +145,12 @@ export function Hero() {
       {/* scroll cue */}
       <div className="absolute bottom-7 left-1/2 hidden -translate-x-1/2 items-center gap-3 sm:flex">
         <span className="kicker">scroll</span>
-        <span className="block h-10 w-px bg-gradient-to-b from-accent/60 to-transparent" />
+        <span className="relative block h-10 w-px overflow-hidden bg-accent/15">
+          <span
+            data-cue
+            className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-accent to-transparent"
+          />
+        </span>
       </div>
     </section>
   )
