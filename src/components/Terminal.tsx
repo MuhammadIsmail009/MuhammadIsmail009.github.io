@@ -1,0 +1,125 @@
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { Section, SectionHeader } from '@/components/ui'
+import { TERMINAL_COMMANDS, TERMINAL_INTRO, TERMINAL_PROMPT } from '@/lib/content'
+
+interface Line {
+  kind: 'in' | 'out'
+  text: string
+}
+
+const intro = (): Line[] => TERMINAL_INTRO.map((text) => ({ kind: 'out', text }))
+
+export function Terminal() {
+  const [history, setHistory] = useState<Line[]>(intro)
+  const [value, setValue] = useState('')
+  const [past, setPast] = useState<string[]>([])
+  const [pastIdx, setPastIdx] = useState(-1)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = bodyRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [history])
+
+  const run = (raw: string) => {
+    const cmd = raw.trim().toLowerCase()
+    if (cmd) setPast((p) => [...p, raw])
+    setPastIdx(-1)
+
+    if (cmd === 'clear') {
+      setHistory([])
+      return
+    }
+    const next: Line[] = [{ kind: 'in', text: raw }]
+    if (cmd) {
+      const found = TERMINAL_COMMANDS[cmd]
+      if (found) next.push(...found.out.map((text) => ({ kind: 'out' as const, text })))
+      else next.push({ kind: 'out', text: `command not found: ${cmd} — try 'help'` })
+    }
+    setHistory((h) => [...h, ...next])
+  }
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    run(value)
+    setValue('')
+  }
+
+  // up/down through command history
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (!past.length) return
+      const idx = pastIdx < 0 ? past.length - 1 : Math.max(0, pastIdx - 1)
+      setPastIdx(idx)
+      setValue(past[idx])
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      if (pastIdx < 0) return
+      const idx = pastIdx + 1
+      if (idx >= past.length) {
+        setPastIdx(-1)
+        setValue('')
+      } else {
+        setPastIdx(idx)
+        setValue(past[idx])
+      }
+    }
+  }
+
+  return (
+    <Section id="terminal" className="py-section">
+      <SectionHeader
+        index="/ 05"
+        label="Easter egg"
+        title="A shell, for the curious."
+        description="Where the personality lives. Type help — then try whoami, stack, or f1."
+        className="mb-12"
+      />
+
+      <div
+        className="overflow-hidden rounded-xl border border-hairline bg-[#0c0c0e] font-mono text-sm shadow-2xl shadow-black/40"
+        data-reveal
+      >
+        <div className="flex items-center gap-2 border-b border-hairline px-4 py-3">
+          <span className="h-3 w-3 rounded-full bg-[#ff5f57]/80" />
+          <span className="h-3 w-3 rounded-full bg-[#febc2e]/80" />
+          <span className="h-3 w-3 rounded-full bg-[#28c840]/80" />
+          <span className="ml-3 text-xs text-faint">kryptctl — interactive shell</span>
+        </div>
+
+        <div
+          ref={bodyRef}
+          className="h-[clamp(280px,40vh,420px)] overflow-y-auto p-4 leading-relaxed"
+          onClick={() => inputRef.current?.focus()}
+        >
+          {history.map((l, i) => (
+            <div key={i} className={l.kind === 'in' ? 'text-fg' : 'text-muted'}>
+              {l.kind === 'in' ? <span className="text-accent">{TERMINAL_PROMPT} </span> : null}
+              <span className="whitespace-pre-wrap break-words">{l.text}</span>
+            </div>
+          ))}
+
+          <form onSubmit={onSubmit} className="flex items-center">
+            <label htmlFor="term-input" className="shrink-0 text-accent">
+              {TERMINAL_PROMPT}&nbsp;
+            </label>
+            <input
+              id="term-input"
+              ref={inputRef}
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyDown={onKeyDown}
+              className="w-full flex-1 bg-transparent text-fg caret-accent outline-none"
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              aria-label="Terminal input — type a command"
+            />
+          </form>
+        </div>
+      </div>
+    </Section>
+  )
+}

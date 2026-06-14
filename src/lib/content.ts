@@ -24,6 +24,16 @@ export const CONTACT = {
   githubLabel: 'MuhammadIsmail009',
 } as const
 
+export const STATUS = {
+  available: true,
+  label: 'Available for internships',
+} as const
+
+export const CTA = {
+  headline: "Let's build something secure",
+  sub: 'Detection that holds, automation that scales, and an engineer who sweats the details.',
+} as const
+
 /** All project links resolve here until exact repo URLs are confirmed. */
 const PROFILE = CONTACT.github
 
@@ -111,6 +121,45 @@ export const PROJECTS: Project[] = [
     linkLabel: 'Coursework',
   },
 ]
+
+/** Factual decompositions of each project, for the expand panel. */
+export const PROJECT_HIGHLIGHTS: Record<string, string[]> = {
+  '01': [
+    'eBPF + Osquery host & network telemetry',
+    'YARA detection rule engine',
+    'XGBoost scoring with SHAP explainability',
+    'EPSS + CISA KEV risk prioritization',
+    'Deployed on K3s (lightweight Kubernetes)',
+  ],
+  '02': [
+    'DQN agent for artificial-noise power allocation',
+    'MISO wiretap channel under imperfect CSI',
+    'Beats a classical optimizer at mid-to-high SNR',
+    'TensorFlow 2 + NumPy / SciPy simulation',
+  ],
+  '03': [
+    'SAST, DAST & SCA quality gates',
+    'Gitleaks secret scanning',
+    'Dependabot dependency hygiene',
+    'Fully automated in GitHub Actions',
+  ],
+  '04': [
+    'CatBoost supervised classifier',
+    'Local Outlier Factor anomaly detection',
+    'Combined signature + behavioral coverage',
+  ],
+  '05': [
+    'ELO-based matchmaking',
+    'OIDC role-based access control',
+    'Express API + PostgreSQL / Neon + Drizzle ORM',
+    'React 18 + TypeScript front end',
+  ],
+  '06': [
+    'NIST SP 800-207 zero-trust architecture',
+    'Least-privilege network segmentation',
+    'Policy enforcement points modeled in Packet Tracer',
+  ],
+}
 
 export interface ExperienceItem {
   role: string

@@ -1,20 +1,37 @@
 import { SmoothScroll } from '@/components/SmoothScroll'
-import { SITE } from '@/lib/content'
+import { Grain } from '@/components/Grain'
+import { Nav } from '@/components/Nav'
+import { Hero } from '@/components/Hero'
+import { Marquee } from '@/components/Marquee'
+import { About } from '@/components/About'
+import { Stats } from '@/components/Stats'
+import { Work } from '@/components/Work'
+import { Experience } from '@/components/Experience'
+import { Stack } from '@/components/Stack'
+import { Terminal } from '@/components/Terminal'
+import { Footer } from '@/components/Footer'
 
 export default function App() {
   return (
     <SmoothScroll>
-      <main className="flex min-h-screen items-center justify-center px-6">
-        <div className="text-center">
-          <p className="kicker mb-6">{SITE.kicker}</p>
-          <h1 className="font-display text-[clamp(3.25rem,13vw,12rem)] font-semibold leading-[0.9] tracking-tight">
-            Muhammad <span className="text-accent text-glow">Ismail</span>
-          </h1>
-          <p className="mx-auto mt-8 max-w-prose2 text-balance text-muted">
-            Foundation booted — design tokens, self-hosted fonts, GSAP, and Lenis smooth
-            scroll are wired.
-          </p>
-        </div>
+      <a
+        href="#main"
+        className="sr-only-custom focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:font-mono focus:text-sm focus:text-canvas"
+      >
+        Skip to content
+      </a>
+      <Grain />
+      <Nav />
+      <main id="main">
+        <Hero />
+        <Marquee />
+        <About />
+        <Stats />
+        <Work />
+        <Experience />
+        <Stack />
+        <Terminal />
+        <Footer />
       </main>
     </SmoothScroll>
   )
