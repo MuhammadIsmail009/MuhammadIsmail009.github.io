@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Self-hosted variable fonts                                          */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Variable.woff2') format('woff2');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    /* color channels (space-separated RGB) — see tailwind.config.ts */
+    --bg: 10 10 11; /* #0A0A0B */
+    --bg-elevated: 20 20 22; /* #141416 */
+    --bg-elevated-2: 27 27 30; /* #1B1B1E */
+    --fg: 242 240 236; /* #F2F0EC */
+    --muted: 138 138 143; /* #8A8A8F */
+    --faint: 90 90 95; /* #5A5A5F */
+    --accent: 240 133 58; /* #F0853A */
+    --accent-soft: 232 114 44; /* #E8722C */
+    --teal: 74 168 160; /* #4AA8A0 */
+    --hairline: 255 255 255;
+
+    /* composed tokens */
+    --accent-glow: rgba(240, 133, 58, 0.18);
+
+    color-scheme: dark;
+  }
+
+  * {
+    border-color: rgb(var(--hairline) / 0.08);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Lenis controls scroll; disable native smooth so they don't fight. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-fg;
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-synthesis: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: rgb(var(--accent) / 0.3);
+    color: #fff;
+  }
+
+  /* Accessible focus — visible ember ring, only for keyboard users. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent) / 0.9);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* thin custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--bg));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--bg-elevated-2));
+    border-radius: 999px;
+    border: 2px solid rgb(var(--bg));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--accent) / 0.5);
+  }
+}
+
+@layer components {
+  /* mono kicker / label */
+  .kicker {
+    @apply font-mono uppercase text-faint;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+  }
+
+  /* hairline divider */
+  .hairline {
+    border-color: rgb(var(--hairline) / 0.08);
+  }
+
+  /* glass surface (nav, cards) */
+  .glass {
+    background: rgb(var(--bg-elevated) / 0.55);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgb(var(--hairline) / 0.08);
+  }
+
+  /* ember-glow text accent helper */
+  .text-glow {
+    text-shadow: 0 0 28px rgba(240, 133, 58, 0.35);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  /* hide content visually but keep it for screen readers */
+  .sr-only-custom {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion — global safety net (JS also branches via matchMedia) */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

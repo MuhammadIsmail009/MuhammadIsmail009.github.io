@@ -1,0 +1,39 @@
+{
+  "name": "muhammadismail009-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "homepage": "https://muhammadismail009.github.io/",
+  "description": "Animated cybersecurity portfolio for Muhammad Ismail — SOC & detection engineering.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:fast": "vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview --port 4173"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@react-three/drei": "^9.114.3",
+    "@react-three/fiber": "^8.17.10",
+    "gsap": "^3.13.0",
+    "lenis": "^1.1.18",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/three": "^0.169.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.6.3",
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
