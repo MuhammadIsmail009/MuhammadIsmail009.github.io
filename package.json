@@ -10,7 +10,8 @@
     "build": "tsc --noEmit && vite build",
     "build:fast": "vite build",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview --port 4173"
+    "preview": "vite preview --port 4173",
+    "verify": "node scripts/verify.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -28,6 +29,7 @@
     "@types/three": "^0.169.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "playwright": "^1.60.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.6.3",
