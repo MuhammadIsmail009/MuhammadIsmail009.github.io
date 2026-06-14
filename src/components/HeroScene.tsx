@@ -27,8 +27,8 @@ export default function HeroScene() {
     <div ref={wrap} aria-hidden className="absolute inset-0">
       {/* CSS bloom underneath the graph (also the Suspense fallback look). */}
       <div
-        className="absolute right-[-12%] top-1/2 h-[78vmin] w-[78vmin] -translate-y-1/2 rounded-full blur-[90px]"
-        style={{ background: 'radial-gradient(circle, var(--accent-glow), transparent 64%)' }}
+        className="absolute right-[-12%] top-1/2 h-[82vmin] w-[82vmin] -translate-y-1/2 rounded-full blur-[40px]"
+        style={{ background: 'radial-gradient(circle, var(--accent-glow), transparent 66%)' }}
       />
       <Canvas
         frameloop={paused ? 'never' : 'always'}

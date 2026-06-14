@@ -9,7 +9,7 @@ export function Grain() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 z-[60]">
       <div
-        className="absolute inset-0 opacity-[0.045] mix-blend-soft-light"
+        className="absolute inset-0 opacity-[0.05]"
         style={{ backgroundImage: NOISE, backgroundSize: '160px 160px' }}
       />
       <div

@@ -1,9 +1,12 @@
-import { Suspense, lazy, useRef } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { SITE } from '@/lib/content'
 import { ButtonLink } from '@/components/ui'
 import { gsap, useGSAP, EASE } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { useMotionReady } from '@/lib/motionReady'
+import { supportsWebGL } from '@/lib/webgl'
+import { onIdle } from '@/lib/idle'
+import { SceneBoundary } from '@/components/SceneBoundary'
 
 const HeroScene = lazy(() => import('@/components/HeroScene'))
 
@@ -26,8 +29,8 @@ function HeroBackdrop() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       <div
-        className="absolute right-[-12%] top-1/2 h-[78vmin] w-[78vmin] -translate-y-1/2 rounded-full blur-[90px]"
-        style={{ background: 'radial-gradient(circle, var(--accent-glow), transparent 64%)' }}
+        className="absolute right-[-12%] top-1/2 h-[82vmin] w-[82vmin] -translate-y-1/2 rounded-full blur-[40px]"
+        style={{ background: 'radial-gradient(circle, var(--accent-glow), transparent 66%)' }}
       />
       <svg
         className="absolute inset-0 h-full w-full opacity-60"
@@ -59,6 +62,22 @@ export function Hero() {
   const reduced = useReducedMotion()
   const ready = useMotionReady()
   const root = useRef<HTMLElement>(null)
+  const webgl = useMemo(() => supportsWebGL(), [])
+
+  // The 3D scene is a desktop enhancement: on phones/tablets the SVG backdrop is
+  // the intended visual, which keeps three.js off mobile entirely (battery, data,
+  // and the mobile-Lighthouse budget). It also mounts only once the page is idle
+  // so the parse stays off the critical path (lower TBT).
+  const [showScene, setShowScene] = useState(false)
+  useEffect(() => {
+    if (reduced || !ready || !webgl) return
+    const desktop =
+      window.matchMedia('(min-width: 1024px)').matches &&
+      window.matchMedia('(pointer: fine)').matches
+    if (!desktop) return
+
+    return onIdle(() => setShowScene(true), 1200)
+  }, [reduced, ready, webgl])
 
   useGSAP(
     () => {
@@ -95,14 +114,17 @@ export function Hero() {
       id="hero"
       className="relative flex min-h-[100svh] items-center overflow-hidden px-gutter pb-24 pt-32"
     >
-      {/* SVG fallback until the 3D scene is ready; reduced motion keeps it. */}
+      {/* SVG fallback until the 3D scene mounts; kept under reduced motion, when
+          WebGL is unavailable, or if the scene errors at runtime. */}
       <div data-hero-scene className="absolute inset-0">
-        {reduced || !ready ? (
-          <HeroBackdrop />
+        {showScene ? (
+          <SceneBoundary fallback={<HeroBackdrop />}>
+            <Suspense fallback={<HeroBackdrop />}>
+              <HeroScene />
+            </Suspense>
+          </SceneBoundary>
         ) : (
-          <Suspense fallback={<HeroBackdrop />}>
-            <HeroScene />
-          </Suspense>
+          <HeroBackdrop />
         )}
       </div>
 

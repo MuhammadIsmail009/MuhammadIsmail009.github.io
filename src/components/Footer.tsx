@@ -9,8 +9,8 @@ export function Footer() {
       {/* ember floor glow */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-1/3 left-1/2 h-[60vmin] w-[90vmin] -translate-x-1/2 rounded-full blur-[110px]"
-        style={{ background: 'radial-gradient(circle, var(--accent-glow), transparent 70%)' }}
+        className="pointer-events-none absolute -bottom-1/3 left-1/2 h-[64vmin] w-[94vmin] -translate-x-1/2 rounded-full blur-[52px]"
+        style={{ background: 'radial-gradient(circle, var(--accent-glow), transparent 72%)' }}
       />
 
       <div className="relative mx-auto max-w-content">

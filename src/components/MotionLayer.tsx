@@ -123,8 +123,6 @@ export function MotionLayer({ ready }: { ready: boolean }) {
             }),
         })
       })
-
-      ScrollTrigger.refresh()
     },
     { dependencies: [ready, reduced] },
   )

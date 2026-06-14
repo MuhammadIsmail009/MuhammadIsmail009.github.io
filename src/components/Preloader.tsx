@@ -19,16 +19,16 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
 
       tl.to(counter, {
         v: 100,
-        duration: 1.5,
+        duration: 0.8,
         ease: 'power2.inOut',
         onUpdate: () => {
           if (num.current) num.current.textContent = String(Math.round(counter.v)).padStart(3, '0')
         },
       })
-        .to('[data-pre-bar]', { scaleX: 1, duration: 1.5, ease: 'power2.inOut' }, 0)
-        .to('[data-pre-content]', { yPercent: -40, opacity: 0, duration: 0.6, ease: 'power2.in' })
+        .to('[data-pre-bar]', { scaleX: 1, duration: 0.8, ease: 'power2.inOut' }, 0)
+        .to('[data-pre-content]', { yPercent: -40, opacity: 0, duration: 0.35, ease: 'power2.in' })
         .add(onReveal, '>-0.05')
-        .to(root.current, { yPercent: -100, duration: 1, ease: EASE.curtain }, '<')
+        .to(root.current, { yPercent: -100, duration: 0.55, ease: EASE.curtain }, '<')
         .add(onDone)
     },
     { scope: root },

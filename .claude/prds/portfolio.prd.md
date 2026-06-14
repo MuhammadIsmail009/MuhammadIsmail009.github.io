@@ -53,7 +53,7 @@ We'll know we're right when **the site is live at the root user-site URL, passes
 | 2 | Static content shell | All sections render with real, accurate content and look intentional with zero motion | complete | — |
 | 3 | Motion & 3D layer | Preloader, hero scramble + security graph, scroll choreography, work gallery, marquee, counters, terminal, footer CTA | complete | — |
 | 4 | Polish pass | Spacing/rhythm, hover & focus states, empty/edge states, mobile refinement | complete | — |
-| 5 | A11y, reduced-motion & performance | Reduced-motion path complete; Lighthouse targets met; 3D lazy/throttled | pending | — |
+| 5 | A11y, reduced-motion & performance | Reduced-motion path complete; Lighthouse targets met; 3D lazy/throttled | complete | — |
 | 6 | Ship gates | react-review, security-review, quality-gate, build-fix, verify all green | pending | — |
 | 7 | Deploy & SEO | Live at user-site root via Actions; OG/favicon/sitemap/robots/JSON-LD present | pending | — |
 | 8 | GitHub profile README | Animated, recruiter-friendly README in MuhammadIsmail009 repo funnels to live site | pending | — |
@@ -74,4 +74,4 @@ We'll know we're right when **the site is live at the root user-site URL, passes
 | Scope creep across 8 milestones | Med | Med | Checkpoint (commit) per milestone; static-first before motion |
 
 ---
-*Status: DRAFT → ACCEPTED for build. Requirements locked via clarification on 2026-06-14. Milestones 1–4 complete; Milestone 5 (a11y, reduced-motion & performance) next.*
+*Status: DRAFT → ACCEPTED for build. Requirements locked via clarification on 2026-06-14. Milestones 1–5 complete (mobile Lighthouse: Perf 90 / A11y 100 / BP 100 / SEO 100, LCP 2.4s); Milestone 6 (ship gates) next.*
