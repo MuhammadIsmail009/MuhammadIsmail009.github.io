@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     description:
       'End-to-end CI/CD security for a Flask app: SAST / DAST / SCA gates, Gitleaks secret scanning, and Dependabot — fully automated with GitHub Actions.',
     tags: ['GitHub Actions', 'SAST', 'DAST', 'SCA', 'Gitleaks', 'Flask'],
-    link: PROFILE,
+    link: 'https://github.com/kryptbakar/Secure-DevSecOps-CI-CD-Pipeline-Implementation',
     linkLabel: 'GitHub',
   },
   {
@@ -109,7 +109,7 @@ export const PROJECTS: Project[] = [
     description:
       'Full-stack turf-booking platform with ELO matchmaking and role-based access. React 18 + TypeScript front end, Express API, PostgreSQL/Neon + Drizzle ORM, OIDC RBAC.',
     tags: ['React 18', 'TypeScript', 'Express', 'PostgreSQL', 'Drizzle', 'OIDC'],
-    link: PROFILE,
+    link: 'https://github.com/kryptbakar/sportify',
     linkLabel: 'GitHub',
   },
   {
