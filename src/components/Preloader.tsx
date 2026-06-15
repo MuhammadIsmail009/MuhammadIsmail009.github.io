@@ -14,22 +14,37 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
 
   useGSAP(
     () => {
-      const counter = { v: 0 }
-      const tl = gsap.timeline()
+      let tl: gsap.core.Timeline | undefined
+      let cancelled = false
 
-      tl.to(counter, {
-        v: 100,
-        duration: 0.8,
-        ease: 'power2.inOut',
-        onUpdate: () => {
-          if (num.current) num.current.textContent = String(Math.round(counter.v)).padStart(3, '0')
-        },
-      })
-        .to('[data-pre-bar]', { scaleX: 1, duration: 0.8, ease: 'power2.inOut' }, 0)
-        .to('[data-pre-content]', { yPercent: -40, opacity: 0, duration: 0.35, ease: 'power2.in' })
-        .add(onReveal, '>-0.05')
-        .to(root.current, { yPercent: -100, duration: 0.55, ease: EASE.curtain }, '<')
-        .add(onDone)
+      const build = () => {
+        if (cancelled || !root.current) return
+        const counter = { v: 0 }
+        tl = gsap.timeline()
+        tl.to(counter, {
+          v: 100,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onUpdate: () => {
+            if (num.current) num.current.textContent = String(Math.round(counter.v)).padStart(3, '0')
+          },
+        })
+          .to('[data-pre-bar]', { scaleX: 1, duration: 0.8, ease: 'power2.inOut' }, 0)
+          .to('[data-pre-content]', { yPercent: -40, opacity: 0, duration: 0.35, ease: 'power2.in' })
+          .add(onReveal, '>-0.05')
+          .to(root.current, { yPercent: -100, duration: 0.55, ease: EASE.curtain }, '<')
+          .add(onDone)
+      }
+
+      // Hold the curtain until webfonts are ready (capped) so the hero's
+      // font-swap reflow happens behind the preloader — no visible CLS.
+      const fonts = document.fonts?.ready ?? Promise.resolve()
+      Promise.race([fonts, new Promise((r) => setTimeout(r, 1500))]).then(build)
+
+      return () => {
+        cancelled = true
+        tl?.kill()
+      }
     },
     { scope: root },
   )

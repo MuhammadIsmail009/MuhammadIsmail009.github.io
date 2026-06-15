@@ -5,9 +5,11 @@ import lighthouse from 'lighthouse'
 import { chromium } from 'playwright'
 
 const PORT = 4173
-const BASE = `http://localhost:${PORT}/`
+// Target a remote URL with BASE=... (skips the local preview server).
+const BASE = process.env.BASE || `http://localhost:${PORT}/`
 
 const startServer = async () => {
+  if (process.env.BASE) return null
   const proc = spawn('npm', ['run', 'preview'], { shell: true, stdio: 'ignore' })
   for (let i = 0; i < 40; i++) {
     try {
@@ -52,7 +54,7 @@ const run = async () => {
       )
     }
     console.log(`\nperformance median=${median(perf)} (runs: ${perf.join(', ')})`)
-    server.kill()
+    server?.kill()
     return
   }
 
@@ -89,7 +91,7 @@ const run = async () => {
 
   console.log(JSON.stringify({ scores, metrics, failing, perfHints }, null, 2))
   writeFileSync('scripts/.verify/lh.json', JSON.stringify(lhr, null, 2))
-  server.kill()
+  server?.kill()
 }
 
 run().catch((e) => {
