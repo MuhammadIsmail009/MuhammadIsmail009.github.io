@@ -54,9 +54,9 @@ We'll know we're right when **the site is live at the root user-site URL, passes
 | 3 | Motion & 3D layer | Preloader, hero scramble + security graph, scroll choreography, work gallery, marquee, counters, terminal, footer CTA | complete | — |
 | 4 | Polish pass | Spacing/rhythm, hover & focus states, empty/edge states, mobile refinement | complete | — |
 | 5 | A11y, reduced-motion & performance | Reduced-motion path complete; Lighthouse targets met; 3D lazy/throttled | complete | — |
-| 6 | Ship gates | react-review, security-review, quality-gate, build-fix, verify all green | pending | — |
-| 7 | Deploy & SEO | Live at user-site root via Actions; OG/favicon/sitemap/robots/JSON-LD present | pending | — |
-| 8 | GitHub profile README | Animated, recruiter-friendly README in MuhammadIsmail009 repo funnels to live site | pending | — |
+| 6 | Ship gates | react-review, security-review, quality-gate, build-fix, verify all green | complete | — |
+| 7 | Deploy & SEO | Live at user-site root via Actions; OG/favicon/sitemap/robots/JSON-LD present | complete | — |
+| 8 | GitHub profile README | Animated, recruiter-friendly README in MuhammadIsmail009 repo funnels to live site | complete | — |
 
 ## Open Questions
 - [ ] Exact public repo URLs for the 5–6 projects (interim: profile link). Owner: Ismail.
@@ -74,4 +74,4 @@ We'll know we're right when **the site is live at the root user-site URL, passes
 | Scope creep across 8 milestones | Med | Med | Checkpoint (commit) per milestone; static-first before motion |
 
 ---
-*Status: DRAFT → ACCEPTED for build. Requirements locked via clarification on 2026-06-14. Milestones 1–5 complete (mobile Lighthouse: Perf 90 / A11y 100 / BP 100 / SEO 100, LCP 2.4s); Milestone 6 (ship gates) next.*
+*Status: SHIPPED. All 8 milestones complete (2026-06-15). Live at https://muhammadismail009.github.io/ via GitHub Actions; profile README live at https://github.com/MuhammadIsmail009. Live mobile Lighthouse median: Performance 92 / Accessibility 100 / Best Practices 100 / SEO 100 (LCP ~2.2s, CLS 0.095, TBT ~200ms). Ship gates green; security-review fixed a terminal prototype-chain crash (regression-tested).*
