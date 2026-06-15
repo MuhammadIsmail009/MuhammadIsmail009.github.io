@@ -77,7 +77,27 @@
     <link rel="preload" href="/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static splash = the preloader's first frame, inlined so it paints at
+           HTML parse (fast FCP/LCP) instead of waiting for the JS bundle. React
+           replaces it on mount; it visually matches Preloader.tsx so there's no
+           seam. Falls back gracefully if JS never runs. -->
+      <div
+        style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;background:#0B0A09;color:#F3F0EA;font-family:'Clash Display',system-ui,sans-serif"
+      >
+        <span
+          style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;color:#847C71"
+          >Muhammad Ismail</span
+        >
+        <span style="font-size:4.5rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums"
+          >000</span
+        >
+        <span
+          style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#847C71"
+          >Cybersecurity Engineer</span
+        >
+      </div>
+    </div>
     <noscript>
       <div style="padding:2rem;font-family:system-ui;color:#F2F0EC;background:#0A0A0B">
         This portfolio uses JavaScript for its motion and 3D. The full content —

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { gsap, useGSAP, ScrollTrigger, SplitText, EASE } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { initMagnetics } from '@/lib/magnetic'
+import { onIdle } from '@/lib/idle'
 import { NAV } from '@/lib/content'
 
 /**
@@ -89,25 +90,29 @@ export function MotionLayer({ ready }: { ready: boolean }) {
       })
 
       // Heading reveals — split into lines and slide each up from behind a mask.
-      // autoSplit re-splits once fonts/width settle so the line breaks are right.
-      const splits = gsap.utils.toArray<HTMLElement>('[data-split]').map((el) =>
-        SplitText.create(el, {
-          type: 'lines',
-          mask: 'lines',
-          autoSplit: true,
-          linesClass: 'split-line',
-          onSplit(self) {
-            gsap.set(el, { opacity: 1 })
-            return gsap.from(self.lines, {
-              yPercent: 115,
-              duration: 1.1,
-              ease: EASE.expo,
-              stagger: 0.12,
-              scrollTrigger: { trigger: el, start: 'top 86%', once: true },
-            })
-          },
-        }),
-      )
+      // Deferred to idle so the line-splitting DOM work stays off the initial
+      // critical path (lower TBT); autoSplit re-splits once fonts/width settle.
+      let splits: SplitText[] = []
+      const cancelSplit = onIdle(() => {
+        splits = gsap.utils.toArray<HTMLElement>('[data-split]').map((el) =>
+          SplitText.create(el, {
+            type: 'lines',
+            mask: 'lines',
+            autoSplit: true,
+            linesClass: 'split-line',
+            onSplit(self) {
+              gsap.set(el, { opacity: 1 })
+              return gsap.from(self.lines, {
+                yPercent: 115,
+                duration: 1.1,
+                ease: EASE.expo,
+                stagger: 0.12,
+                scrollTrigger: { trigger: el, start: 'top 86%', once: true },
+              })
+            },
+          }),
+        )
+      }, 1500)
 
       ScrollTrigger.batch('[data-work-card]', {
         start: 'top 92%',
@@ -148,7 +153,10 @@ export function MotionLayer({ ready }: { ready: boolean }) {
       })
 
       // Revert SplitText DOM wrapping on cleanup (re-runs are deps-driven only).
-      return () => splits.forEach((s) => s.revert())
+      return () => {
+        cancelSplit()
+        splits.forEach((s) => s.revert())
+      }
     },
     { dependencies: [ready, reduced] },
   )
