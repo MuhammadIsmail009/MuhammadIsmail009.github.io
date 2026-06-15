@@ -85,7 +85,7 @@ export const PROJECTS: Project[] = [
   {
     id: '03',
     title: 'Secure DevSecOps Pipeline',
-    meta: 'Solo',
+    meta: 'Contributor',
     description:
       'End-to-end CI/CD security for a Flask app: SAST / DAST / SCA gates, Gitleaks secret scanning, and Dependabot — fully automated with GitHub Actions.',
     tags: ['GitHub Actions', 'SAST', 'DAST', 'SCA', 'Gitleaks', 'Flask'],
