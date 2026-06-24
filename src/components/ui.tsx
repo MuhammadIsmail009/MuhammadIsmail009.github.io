@@ -67,15 +67,21 @@ export function ButtonLink({
   href,
   variant = 'primary',
   className = '',
+  download,
+  icon = '→',
 }: {
   children: ReactNode
   href: string
   variant?: 'primary' | 'ghost'
   className?: string
+  /** Filename to save as; when set the link downloads instead of navigating. */
+  download?: string
+  /** Trailing glyph. Defaults to a forward arrow; pass '↓' for downloads. */
+  icon?: ReactNode
 }) {
   const isAnchor = href.startsWith('#')
   const isMail = href.startsWith('mailto:')
-  const external = !isAnchor && !isMail
+  const external = !isAnchor && !isMail && !download
 
   const base =
     'group relative inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm tracking-wide transition-colors duration-300'
@@ -83,6 +89,10 @@ export function ButtonLink({
     variant === 'primary'
       ? 'bg-accent text-canvas hover:bg-accent-soft'
       : 'border border-hairline text-fg hover:border-accent/50 hover:text-accent'
+
+  // The trailing arrow slides right on hover; a download glyph reads better
+  // nudging down.
+  const iconHover = icon === '↓' ? 'group-hover:translate-y-0.5' : 'group-hover:translate-x-1'
 
   const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (isAnchor) {
@@ -95,14 +105,15 @@ export function ButtonLink({
     <a
       href={href}
       onClick={onClick}
+      download={download}
       target={external ? '_blank' : undefined}
       rel={external ? 'noopener noreferrer' : undefined}
       className={`${base} ${styles} ${className}`}
       data-magnetic
     >
       {children}
-      <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
-        →
+      <span className={`transition-transform duration-300 ${iconHover}`} aria-hidden>
+        {icon}
       </span>
     </a>
   )

@@ -185,6 +185,14 @@ export function Hero() {
           <ButtonLink href="#contact" variant="ghost">
             Get in touch
           </ButtonLink>
+          <ButtonLink
+            href="/Muhammad-Ismail-Resume.pdf"
+            variant="ghost"
+            download="Muhammad-Ismail-Resume.pdf"
+            icon="↓"
+          >
+            Download CV
+          </ButtonLink>
         </div>
       </div>
 
