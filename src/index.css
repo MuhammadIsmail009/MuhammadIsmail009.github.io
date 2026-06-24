@@ -315,57 +315,6 @@
   }
 }
 
-/* ------------------------------------------------------------------ */
-/* Hacker line-art (HackerArt.tsx) — screen flicker, eye pulse, drift.  */
-/* ------------------------------------------------------------------ */
-@keyframes hk-code {
-  0%,
-  100% {
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-.hk-code line {
-  animation: hk-code 2.6s ease-in-out infinite;
-}
-@keyframes hk-eye {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  45% {
-    opacity: 0.3;
-  }
-}
-.hk-eye {
-  animation: hk-eye 3.4s ease-in-out infinite;
-}
-@keyframes hk-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-7px);
-  }
-}
-.hk-float {
-  animation: hk-float 5s ease-in-out infinite;
-}
-.hk-float-slow {
-  animation: hk-float 7s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .hk-code line,
-  .hk-eye,
-  .hk-float,
-  .hk-float-slow {
-    animation: none;
-  }
-}
-
 /* SplitText line masks — a hair of bottom padding so descenders (g, y, p) aren't
    clipped by the per-line overflow mask. */
 .split-line {

@@ -1,6 +1,6 @@
 import { ABOUT } from '@/lib/content'
 import { Section } from '@/components/ui'
-import { HackerArt } from '@/components/HackerArt'
+import { Portrait } from '@/components/Portrait'
 
 export function About() {
   return (
@@ -18,7 +18,7 @@ export function About() {
             {ABOUT.lead}
           </h2>
           <div className="mt-12 flex justify-center lg:mt-16 lg:justify-start" data-reveal>
-            <HackerArt />
+            <Portrait />
           </div>
         </div>
 
