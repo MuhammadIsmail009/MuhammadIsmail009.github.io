@@ -165,6 +165,49 @@
   opacity: 1;
 }
 
+/* Dossier rows assemble in one by one. */
+@keyframes dossier-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.dossier-row {
+  opacity: 0;
+  animation: dossier-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Experience git-log branch line — faint rail + accent line drawn by scroll. */
+.exp-log::before,
+.exp-log::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+.exp-log::before {
+  background: rgb(var(--hairline) / 0.08);
+}
+.exp-log::after {
+  background: linear-gradient(to bottom, rgb(240 133 58 / 0.7), rgb(240 133 58 / 0.15));
+  transform: scaleY(var(--draw, 0));
+  transform-origin: top;
+}
+
+/* Approach step lit by the pipeline event dwelling at its gate. */
+[data-approach-step].is-active > span:first-child {
+  color: rgb(240 133 58 / 0.3);
+}
+[data-approach-step].is-active > span:last-child {
+  transform: scaleX(1);
+}
+
 /* Nav condenses once scrolled past the hero (toggled by MotionLayer). */
 [data-nav] > nav {
   transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;

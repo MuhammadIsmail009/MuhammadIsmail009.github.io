@@ -4,6 +4,7 @@ import { Grain } from '@/components/Grain'
 import { Cursor } from '@/components/Cursor'
 import { Chrome } from '@/components/Chrome'
 import { CommandPalette, SOC_BOOT_EVENT } from '@/components/CommandPalette'
+import { Dossier } from '@/components/Dossier'
 import { Preloader } from '@/components/Preloader'
 import { MotionLayer } from '@/components/MotionLayer'
 import { Nav } from '@/components/Nav'
@@ -57,6 +58,7 @@ export default function App() {
         <Grain />
         <Chrome />
         <CommandPalette />
+        <Dossier />
         <Nav />
         <main id="main">
           <Hero />

@@ -89,7 +89,7 @@ function ContactCard() {
           Muhammad-Ismail-Resume.pdf
         </a>
       </p>
-      <p className="pt-2 text-faint">status: open to Summer ’26 internships.</p>
+      <p className="pt-2 text-faint">status: on shift — Ebryx SOC · NCERT threat intel.</p>
     </div>
   )
 }

@@ -41,8 +41,8 @@ export const CONTACT = {
 
 export const STATUS = {
   available: true,
-  label: 'Available for internships',
-  short: "OPEN · SUMMER '26",
+  label: 'On shift — Ebryx SOC · NCERT threat intel',
+  short: 'ON SHIFT — EBRYX · NCERT',
 } as const
 
 export const CTA = {
@@ -190,14 +190,22 @@ export interface ExperienceItem {
 
 export const EXPERIENCE: ExperienceItem[] = [
   {
-    role: 'Incoming Security Intern',
+    role: 'SOC Analyst Intern',
     org: 'Ebryx',
-    period: 'Upcoming',
+    period: 'Jun 2026 — present',
     summary:
-      'Joining a specialist security team — extending hands-on offensive/defensive security practice beyond the SOC.',
-    upcoming: true,
+      'On the live SOC floor at a specialist security firm — alert triage, detection tuning, and investigations across client environments.',
     hash: 'e8b19f4',
     location: 'Lahore',
+  },
+  {
+    role: 'Threat Intelligence & Incident Management Intern',
+    org: 'NCERT Pakistan · National CERT',
+    period: '2026 — present',
+    summary:
+      'National-CERT duty, remote — collecting and triaging cyber threat intelligence and supporting incident management on cases that matter at national scale.',
+    hash: 'c4e7b21',
+    location: 'Remote',
   },
   {
     role: 'SOC Analyst Intern',
@@ -368,7 +376,7 @@ export interface Stat {
 
 export const STATS: Stat[] = [
   { value: 6, label: 'Security & full-stack projects', pad2: true },
-  { value: 2, label: 'SOC & security internships, incl. incoming', pad2: true },
+  { value: 3, label: 'SOC & security internships', pad2: true },
   { value: 2027, label: 'Graduating · BS Cybersecurity, GIK' },
   { value: 7, label: 'Domains in the toolbelt', pad2: true },
 ]
@@ -388,7 +396,7 @@ export const IDENTITY = [
   { k: 'Based in', v: 'Lahore, Pakistan' },
   { k: 'Focus', v: 'SOC · Detection Engineering · DevSecOps' },
   { k: 'Leadership', v: 'Sponsorship Head, GIK Science Society · Tennis Vice-Captain' },
-  { k: 'Status', v: 'Open to Summer ’26 internships' },
+  { k: 'Status', v: 'SOC @ Ebryx · Threat intel @ NCERT PK' },
 ] as const
 
 /* ------------------------------------------------------------------ */
@@ -435,7 +443,7 @@ export const SOC = {
     '',
     "Attacker's mindset. Defender's discipline.",
     '',
-    'PITB SOC alum · incoming @ Ebryx · building SOC Central (FYP).',
+    'Ebryx SOC · NCERT threat intel · building SOC Central (FYP).',
     'This desktop is a toy — the work is real. Open work/ for proof.',
   ],
   defense: {
@@ -480,12 +488,17 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
       '  anime       off the record',
       '  tennis      off the record',
       '  soc         boot the SOC workstation',
+      '  dossier     what your browser just told me',
       '  clear       clear the screen',
     ],
   },
   soc: {
     desc: 'boot the SOC workstation',
     out: ['Booting ISMAIL SOC…'],
+  },
+  dossier: {
+    desc: 'passive intel — what your browser leaks',
+    out: ['Assembling passive-DNA dossier… 0 bytes transmitted.'],
   },
   whoami: {
     desc: 'who is this',
@@ -529,8 +542,9 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
   experience: {
     desc: 'where i have worked',
     out: [
+      'Ebryx — SOC Analyst Intern (Jun 2026 — present): live SOC floor.',
+      'NCERT PK — Threat Intel & Incident Mgmt Intern (remote).',
       'PITB — SOC Analyst Intern (Summer 2025): detection eng + SOC ops.',
-      'Ebryx — Incoming Security Intern.',
     ],
   },
   contact: {

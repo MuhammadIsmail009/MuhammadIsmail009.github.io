@@ -1,8 +1,36 @@
+import { useRef, useState } from 'react'
 import { CONTACT, CTA, SITE, STATUS } from '@/lib/content'
 import { scrollTo } from '@/lib/scroll'
+import { useGSAP, ScrollTrigger, gsap } from '@/lib/gsap'
+import { useReducedMotion } from '@/lib/useReducedMotion'
 
 export function Footer() {
   const year = new Date().getFullYear()
+  const reduced = useReducedMotion()
+  const emailText = useRef<HTMLSpanElement>(null)
+  const [secure, setSecure] = useState(reduced)
+
+  // The email decrypts into place the first time the section is seen, then the
+  // channel line flips to "established".
+  useGSAP(
+    () => {
+      if (reduced || !emailText.current) return
+      ScrollTrigger.create({
+        trigger: '#contact',
+        start: 'top 65%',
+        once: true,
+        onEnter: () => {
+          gsap.to(emailText.current, {
+            duration: 1.1,
+            ease: 'none',
+            scrambleText: { text: CONTACT.email, chars: 'lowerCase', speed: 0.8 },
+            onComplete: () => setSecure(true),
+          })
+        },
+      })
+    },
+    { dependencies: [reduced] },
+  )
 
   return (
     <footer id="contact" className="relative overflow-hidden px-gutter pb-10 pt-section">
@@ -41,11 +69,20 @@ export function Footer() {
             data-magnetic
             data-cursor-label="MAIL"
           >
-            {CONTACT.email}
+            <span ref={emailText}>{CONTACT.email}</span>
             <span className="transition-transform duration-300 group-hover:translate-x-2" aria-hidden>
               →
             </span>
           </a>
+          <p className="mt-3 flex items-center gap-2 font-mono text-[0.68rem] tracking-[0.12em] text-faint">
+            <span
+              className={`h-1.5 w-1.5 rounded-full transition-colors duration-500 ${
+                secure ? 'bg-accent' : 'bg-faint/60'
+              }`}
+              aria-hidden
+            />
+            {secure ? 'secure channel established · ready to connect' : 'establishing secure channel…'}
+          </p>
         </div>
 
         <div className="mt-16 flex flex-wrap items-center justify-between gap-6 border-t border-hairline pt-8">

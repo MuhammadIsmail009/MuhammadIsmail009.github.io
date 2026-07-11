@@ -1,23 +1,47 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CONTACT, SECTION_INDEX } from '@/lib/content'
+import { CONTACT, PROJECTS, SECTION_INDEX } from '@/lib/content'
 import { scrollTo } from '@/lib/scroll'
+import { DOSSIER_EVENT } from '@/components/Dossier'
 
 interface Action {
   id: string
   label: string
   hint: string
+  /** invisible search keywords */
+  kw?: string
   run: () => void
 }
 
 /** Fired by the palette / nav / terminal to boot the SOC workstation. */
 export const SOC_BOOT_EVENT = 'soc:boot'
 
+/** substring beats subsequence beats nothing. */
+function score(a: Action, q: string): number {
+  if (!q) return 1
+  const s = `${a.label} ${a.hint} ${a.kw ?? ''}`.toLowerCase()
+  if (s.includes(q)) return 2
+  let i = 0
+  for (const ch of s) {
+    if (ch === q[i]) i++
+    if (i === q.length) return 1
+  }
+  return 0
+}
+
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [cursor, setCursor] = useState(0)
+  const [toast, setToast] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const toastT = useRef<number>()
+
+  const notify = (msg: string) => {
+    setToast(msg)
+    window.clearTimeout(toastT.current)
+    toastT.current = window.setTimeout(() => setToast(''), 1600)
+  }
 
   const actions = useMemo<Action[]>(
     () => [
@@ -31,19 +55,40 @@ export function CommandPalette() {
         id: 'soc',
         label: 'Boot ISMAIL SOC',
         hint: 'the fun part',
+        kw: 'workstation desktop linux os',
         run: () => window.dispatchEvent(new CustomEvent(SOC_BOOT_EVENT)),
       },
+      {
+        id: 'dossier',
+        label: 'Passive DNA — what your browser leaks',
+        hint: 'scan',
+        kw: 'recon fingerprint privacy intel dossier tracking',
+        run: () => window.dispatchEvent(new CustomEvent(DOSSIER_EVENT)),
+      },
+      ...PROJECTS.filter((p) => p.link).map((p) => ({
+        id: `repo-${p.id}`,
+        label: `Open ${p.title} repo`,
+        hint: 'github',
+        kw: 'project code repo source',
+        run: () => window.open(p.link!, '_blank', 'noopener'),
+      })),
       {
         id: 'cv',
         label: 'View CV',
         hint: 'pdf',
+        kw: 'resume download',
         run: () => window.open('/Muhammad-Ismail-Resume.pdf', '_blank', 'noopener'),
       },
       {
         id: 'copy-email',
         label: 'Copy email address',
         hint: CONTACT.email,
-        run: () => void navigator.clipboard?.writeText(CONTACT.email).catch(() => {}),
+        kw: 'contact mail',
+        run: () =>
+          void navigator.clipboard
+            ?.writeText(CONTACT.email)
+            .then(() => notify('Email copied ✓'))
+            .catch(() => {}),
       },
       {
         id: 'github',
@@ -55,7 +100,17 @@ export function CommandPalette() {
         id: 'linkedin',
         label: 'Open LinkedIn',
         hint: CONTACT.linkedinLabel,
+        kw: 'connect',
         run: () => window.open(CONTACT.linkedin, '_blank', 'noopener'),
+      },
+      {
+        id: 'hire',
+        label: 'sudo hire-ismail',
+        hint: '☺',
+        kw: 'job internship recruit available work together',
+        run: () => {
+          window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent("Let's work together")}`
+        },
       },
     ],
     [],
@@ -64,9 +119,11 @@ export function CommandPalette() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return actions
-    return actions.filter(
-      (a) => a.label.toLowerCase().includes(q) || a.hint.toLowerCase().includes(q),
-    )
+    return actions
+      .map((a) => [score(a, q), a] as const)
+      .filter(([s]) => s > 0)
+      .sort((a, b) => b[0] - a[0])
+      .map(([, a]) => a)
   }, [actions, query])
 
   // Global shortcut.
@@ -99,7 +156,13 @@ export function CommandPalette() {
 
   useEffect(() => setCursor(0), [query])
 
-  if (!open) return null
+  const toastEl = toast ? (
+    <div className="fixed bottom-8 left-1/2 z-[270] -translate-x-1/2 rounded-full border border-accent/40 bg-canvas/90 px-5 py-2 font-mono text-xs text-accent shadow-lg backdrop-blur-sm">
+      {toast}
+    </div>
+  ) : null
+
+  if (!open) return toastEl
 
   const exec = (a: Action) => {
     setOpen(false)
@@ -120,6 +183,8 @@ export function CommandPalette() {
   }
 
   return (
+    <>
+    {toastEl}
     <div
       className="fixed inset-0 z-[250] flex items-start justify-center bg-black/60 px-4 pt-[16vh] backdrop-blur-sm"
       onClick={() => setOpen(false)}
@@ -175,5 +240,6 @@ export function CommandPalette() {
         </ul>
       </div>
     </div>
+    </>
   )
 }

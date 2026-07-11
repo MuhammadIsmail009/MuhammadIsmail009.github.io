@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { Section, SectionHeader } from '@/components/ui'
 import { TERMINAL_COMMANDS, TERMINAL_INTRO, TERMINAL_PROMPT } from '@/lib/content'
 import { SOC_BOOT_EVENT } from '@/components/CommandPalette'
+import { DOSSIER_EVENT } from '@/components/Dossier'
 
 interface Line {
   kind: 'in' | 'out'
@@ -49,9 +50,12 @@ export function TerminalShell({ heightClass = 'h-[clamp(280px,40vh,420px)]' }: {
     }
     setHistory((h) => [...h, ...next])
 
-    // `soc` boots the workstation (after the output has a beat to land).
+    // `soc` boots the workstation (after the output has a beat to land);
+    // `dossier` opens the passive-intel modal the same way.
     if (cmd === 'soc') {
       window.setTimeout(() => window.dispatchEvent(new CustomEvent(SOC_BOOT_EVENT)), 450)
+    } else if (cmd === 'dossier') {
+      window.setTimeout(() => window.dispatchEvent(new CustomEvent(DOSSIER_EVENT)), 450)
     }
   }
 
