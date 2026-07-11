@@ -1,4 +1,4 @@
-import { ABOUT } from '@/lib/content'
+import { ABOUT, IDENTITY } from '@/lib/content'
 import { Section } from '@/components/ui'
 import { Portrait } from '@/components/Portrait'
 
@@ -32,6 +32,29 @@ export function About() {
               {p}
             </p>
           ))}
+
+          {/* Identity card — quick-scan facts */}
+          <dl
+            className="relative mt-10 overflow-hidden rounded-xl border border-hairline bg-surface/40"
+            data-reveal
+            data-tilt
+            data-spotlight
+          >
+            <div className="border-b border-hairline px-5 py-3 font-mono text-xs text-faint">
+              <span className="text-accent">//</span> IDENTITY
+            </div>
+            {IDENTITY.map((row) => (
+              <div
+                key={row.k}
+                className="grid grid-cols-[7.5rem_1fr] gap-4 border-b border-hairline px-5 py-3 last:border-b-0 sm:grid-cols-[9rem_1fr]"
+              >
+                <dt className="font-mono text-xs uppercase tracking-[0.15em] text-faint">
+                  {row.k}
+                </dt>
+                <dd className="font-mono text-xs leading-relaxed text-muted">{row.v}</dd>
+              </div>
+            ))}
+          </dl>
 
           <div className="mt-10 flex flex-wrap gap-3" data-reveal>
             <span className="kicker mr-1 self-center">Off the clock</span>

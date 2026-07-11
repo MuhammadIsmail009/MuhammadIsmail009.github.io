@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { Section, SectionHeader } from '@/components/ui'
 import { TERMINAL_COMMANDS, TERMINAL_INTRO, TERMINAL_PROMPT } from '@/lib/content'
+import { SOC_BOOT_EVENT } from '@/components/CommandPalette'
 
 interface Line {
   kind: 'in' | 'out'
@@ -9,13 +10,18 @@ interface Line {
 
 const intro = (): Line[] => TERMINAL_INTRO.map((text) => ({ kind: 'out', text }))
 
-export function Terminal() {
+/**
+ * The interactive shell itself — reused by the on-page section and by the
+ * SOC-mode terminal window. `heightClass` sizes the scrollback area.
+ */
+export function TerminalShell({ heightClass = 'h-[clamp(280px,40vh,420px)]' }: { heightClass?: string }) {
   const [history, setHistory] = useState<Line[]>(intro)
   const [value, setValue] = useState('')
   const [past, setPast] = useState<string[]>([])
   const [pastIdx, setPastIdx] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
+  const inputId = useId()
 
   useEffect(() => {
     const el = bodyRef.current
@@ -42,6 +48,11 @@ export function Terminal() {
       else next.push({ kind: 'out', text: `command not found: ${cmd} — try 'help'` })
     }
     setHistory((h) => [...h, ...next])
+
+    // `soc` boots the workstation (after the output has a beat to land).
+    if (cmd === 'soc') {
+      window.setTimeout(() => window.dispatchEvent(new CustomEvent(SOC_BOOT_EVENT)), 450)
+    }
   }
 
   const onSubmit = (e: FormEvent) => {
@@ -73,56 +84,61 @@ export function Terminal() {
   }
 
   return (
+    <div
+      ref={bodyRef}
+      className={`${heightClass} overflow-y-auto p-4 font-mono text-sm leading-relaxed`}
+      onClick={() => inputRef.current?.focus()}
+    >
+      {history.map((l, i) => (
+        <div key={i} className={l.kind === 'in' ? 'text-fg' : 'text-muted'}>
+          {l.kind === 'in' ? <span className="text-accent">{TERMINAL_PROMPT} </span> : null}
+          <span className="whitespace-pre-wrap break-words">{l.text}</span>
+        </div>
+      ))}
+
+      <form onSubmit={onSubmit} className="flex items-center">
+        <label htmlFor={inputId} className="shrink-0 text-accent">
+          {TERMINAL_PROMPT}&nbsp;
+        </label>
+        <input
+          id={inputId}
+          ref={inputRef}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={onKeyDown}
+          className="w-full flex-1 bg-transparent text-fg caret-accent outline-none"
+          autoComplete="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          aria-label="Terminal input — type a command"
+        />
+      </form>
+    </div>
+  )
+}
+
+export function Terminal() {
+  return (
     <Section id="terminal" className="py-section">
       <SectionHeader
-        index="/ 05"
+        index="/ 07"
         label="Easter egg"
         title="A shell, for the curious."
-        description="Where the personality lives. Type help — then try whoami, stack, or f1."
+        description="Where the personality lives. Type help — then try whoami, stack, or soc."
         className="mb-12"
       />
 
       <div
-        className="scanlines relative overflow-hidden rounded-xl border border-hairline bg-[#0c0b0a] font-mono text-sm shadow-2xl shadow-black/40"
+        className="scanlines relative overflow-hidden rounded-xl border border-hairline bg-[#0c0b0a] shadow-2xl shadow-black/40"
         data-reveal
       >
         <div className="relative z-[2] flex items-center gap-2 border-b border-hairline px-4 py-3">
           <span className="h-3 w-3 rounded-full bg-[#ff5f57]/80" />
           <span className="h-3 w-3 rounded-full bg-[#febc2e]/80" />
           <span className="h-3 w-3 rounded-full bg-[#28c840]/80" />
-          <span className="glitch ml-3 text-xs text-faint">kryptctl — interactive shell</span>
+          <span className="glitch ml-3 font-mono text-xs text-faint">kryptctl — interactive shell</span>
         </div>
-
-        <div
-          ref={bodyRef}
-          className="h-[clamp(280px,40vh,420px)] overflow-y-auto p-4 leading-relaxed"
-          onClick={() => inputRef.current?.focus()}
-        >
-          {history.map((l, i) => (
-            <div key={i} className={l.kind === 'in' ? 'text-fg' : 'text-muted'}>
-              {l.kind === 'in' ? <span className="text-accent">{TERMINAL_PROMPT} </span> : null}
-              <span className="whitespace-pre-wrap break-words">{l.text}</span>
-            </div>
-          ))}
-
-          <form onSubmit={onSubmit} className="flex items-center">
-            <label htmlFor="term-input" className="shrink-0 text-accent">
-              {TERMINAL_PROMPT}&nbsp;
-            </label>
-            <input
-              id="term-input"
-              ref={inputRef}
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              onKeyDown={onKeyDown}
-              className="w-full flex-1 bg-transparent text-fg caret-accent outline-none"
-              autoComplete="off"
-              autoCapitalize="off"
-              spellCheck={false}
-              aria-label="Terminal input — type a command"
-            />
-          </form>
-        </div>
+        <TerminalShell />
       </div>
     </Section>
   )

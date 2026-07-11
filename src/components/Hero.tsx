@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
-import { SITE } from '@/lib/content'
+import { SITE, STATUS } from '@/lib/content'
 import { ButtonLink } from '@/components/ui'
+import { useClock } from '@/lib/useClock'
 import { gsap, useGSAP, EASE } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { useMotionReady } from '@/lib/motionReady'
@@ -61,8 +62,24 @@ function HeroBackdrop() {
 export function Hero() {
   const reduced = useReducedMotion()
   const ready = useMotionReady()
+  const clock = useClock()
   const root = useRef<HTMLElement>(null)
   const webgl = useMemo(() => supportsWebGL(), [])
+
+  // Rotating focus ticker — cycles the disciplines on shift.
+  const [focusIdx, setFocusIdx] = useState(0)
+  const [focusOut, setFocusOut] = useState(false)
+  useEffect(() => {
+    if (reduced) return
+    const id = window.setInterval(() => {
+      setFocusOut(true)
+      window.setTimeout(() => {
+        setFocusIdx((i) => (i + 1) % SITE.focus.length)
+        setFocusOut(false)
+      }, 380)
+    }, 2600)
+    return () => window.clearInterval(id)
+  }, [reduced])
 
   // The 3D scene is a desktop enhancement: on phones/tablets the SVG backdrop is
   // the intended visual, which keeps three.js off mobile entirely (battery, data,
@@ -191,6 +208,33 @@ export function Hero() {
         </div>
       </div>
 
+      {/* live status — clock + availability */}
+      <div
+        className="absolute bottom-7 left-gutter hidden flex-col gap-1.5 sm:flex"
+        data-hero-fade
+      >
+        <span className="font-mono text-xs tabular-nums text-faint">
+          <span className="text-accent">{clock}</span> {SITE.timezoneLabel} · {SITE.base}
+        </span>
+        <span className="flex items-center gap-2 font-mono text-[0.65rem] tracking-[0.15em] text-faint">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+          </span>
+          {STATUS.short}
+        </span>
+        <span className="flex items-baseline gap-2 font-mono text-[0.65rem] tracking-[0.15em] text-faint">
+          FOCUS —
+          <span
+            className={`inline-block text-accent transition-all duration-300 ease-out ${
+              focusOut ? '-translate-y-1 opacity-0' : 'translate-y-0 opacity-100'
+            }`}
+          >
+            {SITE.focus[focusIdx]}
+          </span>
+        </span>
+      </div>
+
       {/* scroll cue */}
       <div className="absolute bottom-7 left-1/2 hidden -translate-x-1/2 items-center gap-3 sm:flex">
         <span className="kicker">scroll</span>
@@ -200,6 +244,17 @@ export function Hero() {
             className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-accent to-transparent"
           />
         </span>
+      </div>
+
+      {/* coordinates */}
+      <div
+        className="absolute bottom-7 right-gutter hidden flex-col items-end gap-0.5 font-mono text-xs text-faint sm:flex"
+        data-hero-fade
+        aria-hidden
+      >
+        {SITE.coords.map((c) => (
+          <span key={c}>{c}</span>
+        ))}
       </div>
     </section>
   )

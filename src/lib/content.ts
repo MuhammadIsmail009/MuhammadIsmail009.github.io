@@ -16,6 +16,19 @@ export const SITE = {
   taglineBlue: "Defender's discipline.",
   url: 'https://muhammadismail009.github.io/',
   location: 'Pakistan',
+  base: 'Lahore, PK',
+  school: 'GIK Institute',
+  coords: ['31.5204° N', '74.3587° E'],
+  timezone: 'Asia/Karachi',
+  timezoneLabel: 'PKT',
+  /** Rotating hero focus ticker — the disciplines on shift. */
+  focus: [
+    'DETECTION ENGINEERING',
+    'THREAT INTELLIGENCE',
+    'INCIDENT RESPONSE',
+    'DEVSECOPS',
+    'ML-DRIVEN DEFENSE',
+  ],
 } as const
 
 export const CONTACT = {
@@ -29,6 +42,7 @@ export const CONTACT = {
 export const STATUS = {
   available: true,
   label: 'Available for internships',
+  short: "OPEN · SUMMER '26",
 } as const
 
 export const CTA = {
@@ -169,6 +183,9 @@ export interface ExperienceItem {
   period: string
   summary: string
   upcoming?: boolean
+  /** Stable fake commit hash for the git-log presentation. */
+  hash: string
+  location: string
 }
 
 export const EXPERIENCE: ExperienceItem[] = [
@@ -179,6 +196,8 @@ export const EXPERIENCE: ExperienceItem[] = [
     summary:
       'Joining a specialist security team — extending hands-on offensive/defensive security practice beyond the SOC.',
     upcoming: true,
+    hash: 'e8b19f4',
+    location: 'Lahore',
   },
   {
     role: 'SOC Analyst Intern',
@@ -186,6 +205,99 @@ export const EXPERIENCE: ExperienceItem[] = [
     period: 'Summer 2025',
     summary:
       'Detection engineering and SOC operations — triage, tuning, and turning raw telemetry into signal. The anchor of my blue-team experience.',
+    hash: 'a3c47d2',
+    location: 'Lahore',
+  },
+]
+
+/* ------------------------------------------------------------------ */
+/* Approach — how the work gets done (Model → Detect → Triage → Harden) */
+/* ------------------------------------------------------------------ */
+
+export interface ApproachStep {
+  n: string
+  title: string
+  body: string
+}
+
+export const APPROACH = {
+  kicker: 'Methodology',
+  title: 'Defense, engineered end to end.',
+  steps: [
+    {
+      n: '01',
+      title: 'Model',
+      body:
+        'Threat-model before anything ships — STRIDE the design, map the attack surface, and decide what "detected" has to mean for this system.',
+    },
+    {
+      n: '02',
+      title: 'Detect',
+      body:
+        'Turn telemetry into signal: eBPF, Osquery and YARA on the endpoint, SIEM rules mapped to MITRE ATT&CK, ML scoring where rules run out.',
+    },
+    {
+      n: '03',
+      title: 'Triage',
+      body:
+        'An alert is a question, not an answer. Prioritize with EPSS and CISA KEV, enrich with context, and close the gap between alert and answer.',
+    },
+    {
+      n: '04',
+      title: 'Harden',
+      body:
+        'Feed every incident back into the pipeline — SAST/DAST/SCA gates, zero-trust segmentation, and controls mapped to ISO 27001 / NIST CSF.',
+    },
+  ] satisfies ApproachStep[],
+} as const
+
+/* ------------------------------------------------------------------ */
+/* Archive — the smaller builds that don't need a hero card             */
+/* ------------------------------------------------------------------ */
+
+export interface ArchiveItem {
+  title: string
+  meta: string
+  tags: string
+  year: string
+  link: string | null
+}
+
+export const ARCHIVE: ArchiveItem[] = [
+  {
+    title: 'GIK Timetable Scheduler',
+    meta: 'CSP · Optimization',
+    tags: 'Python · CSP · CustomTkinter',
+    year: '2026',
+    link: 'https://github.com/MuhammadIsmail009/gik-timetable-scheduler',
+  },
+  {
+    title: 'Cybersecurity Log Analyzer',
+    meta: 'Data Structures',
+    tags: 'C++ · Hash tables · BSTs · Priority queues',
+    year: '2025',
+    link: null,
+  },
+  {
+    title: 'Secure Channel Communication',
+    meta: 'Applied Crypto',
+    tags: '64-bit encryption · WhatsApp API key delivery',
+    year: '2025',
+    link: null,
+  },
+  {
+    title: 'Wi-Fi Disruption Tool',
+    meta: 'Offensive Security',
+    tags: 'ESP8266 · Deauth frames · Pen-testing',
+    year: '2024',
+    link: null,
+  },
+  {
+    title: 'CEH System Hacking Lab',
+    meta: 'Offensive Security',
+    tags: 'Privilege escalation · Password attacks · Kali',
+    year: '2024',
+    link: null,
   },
 ]
 
@@ -270,6 +382,73 @@ export const ABOUT = {
   interests: ['Formula 1', 'Anime', 'Tennis — GIK team Vice-Captain'],
 } as const
 
+/** Identity card facts — the quick-scan sidebar in About. */
+export const IDENTITY = [
+  { k: 'Degree', v: 'BS Cybersecurity · GIK, 2023 — 2027' },
+  { k: 'Based in', v: 'Lahore, Pakistan' },
+  { k: 'Focus', v: 'SOC · Detection Engineering · DevSecOps' },
+  { k: 'Leadership', v: 'Sponsorship Head, GIK Science Society · Tennis Vice-Captain' },
+  { k: 'Status', v: 'Open to Summer ’26 internships' },
+] as const
+
+/* ------------------------------------------------------------------ */
+/* Section index — the fixed left-rail dots + command palette targets   */
+/* ------------------------------------------------------------------ */
+
+export interface IndexedSection {
+  id: string
+  label: string
+}
+
+export const SECTION_INDEX: IndexedSection[] = [
+  { id: 'hero', label: 'Index' },
+  { id: 'about', label: 'About' },
+  { id: 'approach', label: 'Approach' },
+  { id: 'work', label: 'Work' },
+  { id: 'archive', label: 'Archive' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'stack', label: 'Stack' },
+  { id: 'terminal', label: 'Terminal' },
+  { id: 'contact', label: 'Contact' },
+]
+
+/* ------------------------------------------------------------------ */
+/* ISMAIL SOC — the boot-into-a-SOC-workstation mode                    */
+/* ------------------------------------------------------------------ */
+
+export const SOC = {
+  toggleLabel: 'ISMAIL SOC',
+  hint: 'psst — this site boots into a SOC. hit the switch',
+  osName: 'ISMAIL SOC 26.07 LTS',
+  bootLines: [
+    '[  OK  ] Reached target Detection Pipeline',
+    '[  OK  ] Started eBPF Telemetry Collector',
+    '[  OK  ] Loaded 412 YARA rules — 0 errors',
+    '[  OK  ] Mounted /var/log/soc (append-only)',
+    '[  OK  ] Enriching feeds — EPSS · CISA KEV · MITRE ATT&CK',
+    '[  OK  ] Started kryptctl interactive shell',
+    '[  OK  ] Analyst on shift: ismail',
+  ],
+  readme: [
+    'MUHAMMAD ISMAIL — cybersecurity engineer.',
+    'SOC & detection engineering · GIK Institute, class of 2027.',
+    '',
+    "Attacker's mindset. Defender's discipline.",
+    '',
+    'PITB SOC alum · incoming @ Ebryx · building SOC Central (FYP).',
+    'This desktop is a toy — the work is real. Open work/ for proof.',
+  ],
+  defense: {
+    core: 'SOC-CENTRAL',
+    nodes: ['WEB', 'API', 'DB', 'IOT', 'VPN', 'MAIL'],
+    feedBoot: [
+      '[ OK ] SOC-CENTRAL core online — 6 segments monitored',
+      'SYS  detection pipeline armed · YARA + ML scoring live',
+      'HINT click a hostile to block it before it reaches a segment',
+    ],
+  },
+} as const
+
 /* ------------------------------------------------------------------ */
 /* Terminal easter egg — the ONLY place personality/humor lives.       */
 /* ------------------------------------------------------------------ */
@@ -300,8 +479,13 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
       '  f1          off the record',
       '  anime       off the record',
       '  tennis      off the record',
+      '  soc         boot the SOC workstation',
       '  clear       clear the screen',
     ],
+  },
+  soc: {
+    desc: 'boot the SOC workstation',
+    out: ['Booting ISMAIL SOC…'],
   },
   whoami: {
     desc: 'who is this',

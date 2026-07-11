@@ -39,6 +39,7 @@ export function Footer() {
             href={`mailto:${CONTACT.email}`}
             className="group inline-flex items-center gap-3 font-display text-2xl font-medium text-fg transition-colors hover:text-accent sm:text-4xl"
             data-magnetic
+            data-cursor-label="MAIL"
           >
             {CONTACT.email}
             <span className="transition-transform duration-300 group-hover:translate-x-2" aria-hidden>

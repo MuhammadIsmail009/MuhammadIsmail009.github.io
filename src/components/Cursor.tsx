@@ -9,20 +9,26 @@ import { gsap, useGSAP } from '@/lib/gsap'
 export function Cursor() {
   const dot = useRef<HTMLDivElement>(null)
   const ring = useRef<HTMLDivElement>(null)
+  const label = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
     const dotEl = dot.current
     const ringEl = ring.current
-    if (!dotEl || !ringEl) return
+    const labelEl = label.current
+    if (!dotEl || !ringEl || !labelEl) return
 
     gsap.set([dotEl, ringEl], { xPercent: -50, yPercent: -50 })
+    gsap.set(labelEl, { xPercent: -50 })
 
     const xDot = gsap.quickTo(dotEl, 'x', { duration: 0.15, ease: 'power3' })
     const yDot = gsap.quickTo(dotEl, 'y', { duration: 0.15, ease: 'power3' })
     const xRing = gsap.quickTo(ringEl, 'x', { duration: 0.5, ease: 'power3' })
     const yRing = gsap.quickTo(ringEl, 'y', { duration: 0.5, ease: 'power3' })
+    const xLab = gsap.quickTo(labelEl, 'x', { duration: 0.5, ease: 'power3' })
+    const yLab = gsap.quickTo(labelEl, 'y', { duration: 0.5, ease: 'power3' })
 
     let visible = false
+    let labelOn = false
     const onMove = (e: MouseEvent) => {
       if (!visible) {
         visible = true
@@ -32,10 +38,23 @@ export function Cursor() {
       yDot(e.clientY)
       xRing(e.clientX)
       yRing(e.clientY)
+      xLab(e.clientX)
+      yLab(e.clientY + 26)
 
-      const interactive = (e.target as HTMLElement)?.closest(
-        'a, button, [data-magnetic], input, [role="button"]',
-      )
+      const target = e.target as HTMLElement
+      const interactive = target?.closest('a, button, [data-magnetic], input, [role="button"]')
+      const labelled = target?.closest<HTMLElement>('[data-cursor-label]')
+      const text = labelled?.dataset.cursorLabel
+
+      if (text && !labelOn) {
+        labelOn = true
+        labelEl.textContent = text
+        gsap.to(labelEl, { autoAlpha: 1, duration: 0.25, overwrite: 'auto' })
+      } else if (!text && labelOn) {
+        labelOn = false
+        gsap.to(labelEl, { autoAlpha: 0, duration: 0.2, overwrite: 'auto' })
+      }
+
       gsap.to(ringEl, {
         scale: interactive ? 1.8 : 1,
         borderColor: interactive ? 'rgb(240 133 58 / 0.9)' : 'rgb(240 133 58 / 0.35)',
@@ -46,7 +65,8 @@ export function Cursor() {
 
     const onLeave = () => {
       visible = false
-      gsap.to([dotEl, ringEl], { autoAlpha: 0, duration: 0.3 })
+      labelOn = false
+      gsap.to([dotEl, ringEl, labelEl], { autoAlpha: 0, duration: 0.3 })
     }
 
     window.addEventListener('mousemove', onMove)
@@ -64,6 +84,10 @@ export function Cursor() {
         className="invisible fixed left-0 top-0 h-9 w-9 rounded-full border border-accent/35"
       />
       <div ref={dot} className="invisible fixed left-0 top-0 h-1.5 w-1.5 rounded-full bg-accent" />
+      <div
+        ref={label}
+        className="invisible fixed left-0 top-0 rounded-full border border-accent/40 bg-canvas/85 px-2.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-accent backdrop-blur-sm"
+      />
     </div>
   )
 }

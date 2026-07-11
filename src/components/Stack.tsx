@@ -5,7 +5,7 @@ export function Stack() {
   return (
     <Section id="stack" className="py-section">
       <SectionHeader
-        index="/ 04"
+        index="/ 06"
         label="Stack · Toolbelt"
         title="The tools I reach for."
         description="Blue-team first, with the ML, infra, and web range to build the whole thing."

@@ -1,15 +1,19 @@
-import { useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { SmoothScroll } from '@/components/SmoothScroll'
 import { Grain } from '@/components/Grain'
 import { Cursor } from '@/components/Cursor'
+import { Chrome } from '@/components/Chrome'
+import { CommandPalette, SOC_BOOT_EVENT } from '@/components/CommandPalette'
 import { Preloader } from '@/components/Preloader'
 import { MotionLayer } from '@/components/MotionLayer'
 import { Nav } from '@/components/Nav'
 import { Hero } from '@/components/Hero'
 import { Marquee } from '@/components/Marquee'
 import { About } from '@/components/About'
+import { Approach } from '@/components/Approach'
 import { Stats } from '@/components/Stats'
 import { Work } from '@/components/Work'
+import { Archive } from '@/components/Archive'
 import { Experience } from '@/components/Experience'
 import { Stack } from '@/components/Stack'
 import { Terminal } from '@/components/Terminal'
@@ -17,11 +21,23 @@ import { Footer } from '@/components/Footer'
 import { MotionReadyContext } from '@/lib/motionReady'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 
+// SOC mode pulls in the workstation + defense-game code — keep it out of the
+// initial bundle and load it only when the analyst boots.
+const SocMode = lazy(() => import('@/components/soc/SocMode'))
+
 export default function App() {
   const reduced = useReducedMotion()
   // Reduced motion skips the preloader entirely: content is ready immediately.
   const [ready, setReady] = useState(reduced)
   const [showPreloader, setShowPreloader] = useState(!reduced)
+  const [soc, setSoc] = useState(false)
+
+  // Nav, terminal, and the command palette all boot the SOC via this event.
+  useEffect(() => {
+    const boot = () => setSoc(true)
+    window.addEventListener(SOC_BOOT_EVENT, boot)
+    return () => window.removeEventListener(SOC_BOOT_EVENT, boot)
+  }, [])
 
   return (
     <MotionReadyContext.Provider value={ready}>
@@ -39,13 +55,17 @@ export default function App() {
           Skip to content
         </a>
         <Grain />
+        <Chrome />
+        <CommandPalette />
         <Nav />
         <main id="main">
           <Hero />
           <Marquee />
           <About />
+          <Approach />
           <Stats />
           <Work />
+          <Archive />
           <Experience />
           <Stack />
           <Terminal />
@@ -54,6 +74,12 @@ export default function App() {
       </SmoothScroll>
 
       <MotionLayer ready={ready} />
+
+      {soc ? (
+        <Suspense fallback={null}>
+          <SocMode onExit={() => setSoc(false)} />
+        </Suspense>
+      ) : null}
     </MotionReadyContext.Provider>
   )
 }

@@ -40,6 +40,7 @@ function WorkCard({ project }: { project: Project }) {
             target="_blank"
             rel="noopener noreferrer"
             className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-fg transition-colors hover:text-accent"
+            data-cursor-label="OPEN"
           >
             {project.linkLabel}
             <span aria-hidden>↗</span>
@@ -61,7 +62,7 @@ export function Work() {
       <div className="px-gutter">
         <div className="mx-auto max-w-content">
           <SectionHeader
-            index="/ 02"
+            index="/ 03"
             label="Selected Work"
             title="Systems that watch the systems."
             description="Detection platforms, security research, and full-stack builds. Scroll the track — or jump to the repos."

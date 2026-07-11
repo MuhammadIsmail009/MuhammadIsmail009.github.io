@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { gsap, useGSAP, ScrollTrigger, SplitText, EASE } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { initMagnetics } from '@/lib/magnetic'
+import { initScramble } from '@/lib/scramble'
+import { initCardFX } from '@/lib/cardfx'
 import { onIdle } from '@/lib/idle'
 import { NAV } from '@/lib/content'
 
@@ -130,6 +132,30 @@ export function MotionLayer({ ready }: { ready: boolean }) {
           }),
       })
 
+      // Velocity-reactive marquee: scroll speed scales the drift and shears the
+      // track. Replaces the CSS keyframe loop (which can't change speed) with a
+      // GSAP tween whose timeScale follows scroll velocity.
+      const marqueeTrack = document.querySelector<HTMLElement>('[data-marquee-track]')
+      if (marqueeTrack) {
+        marqueeTrack.style.animation = 'none'
+        const drift = gsap.to(marqueeTrack, { xPercent: -50, duration: 30, ease: 'none', repeat: -1 })
+        const skew = gsap.quickTo(marqueeTrack, 'skewX', { duration: 0.5, ease: 'power3' })
+        const settle = gsap.delayedCall(0.25, () => {
+          gsap.to(drift, { timeScale: 1, duration: 0.6, overwrite: true })
+          skew(0)
+        }).pause()
+        ScrollTrigger.create({
+          start: 0,
+          end: 'max',
+          onUpdate: (self) => {
+            const v = gsap.utils.clamp(-4000, 4000, self.getVelocity())
+            drift.timeScale((v < 0 ? -1 : 1) * (1 + Math.abs(v) / 700))
+            skew(gsap.utils.clamp(-10, 10, v / 320))
+            settle.restart(true)
+          },
+        })
+      }
+
       // Count-up counters.
       gsap.utils.toArray<HTMLElement>('[data-counter]').forEach((el) => {
         const value = Number(el.dataset.value ?? '0')
@@ -161,11 +187,19 @@ export function MotionLayer({ ready }: { ready: boolean }) {
     { dependencies: [ready, reduced] },
   )
 
-  // Magnetic hover — plain DOM listeners, so kept outside the gsap context.
+  // Magnetic hover + scramble links + card tilt/spotlight — plain DOM
+  // listeners, so kept outside the gsap context.
   useEffect(() => {
     if (reduced || !ready) return
     if (window.matchMedia('(pointer: coarse)').matches) return
-    return initMagnetics(document)
+    const offMagnetic = initMagnetics(document)
+    const offScramble = initScramble(document)
+    const offCardFX = initCardFX(document)
+    return () => {
+      offMagnetic?.()
+      offScramble()
+      offCardFX()
+    }
   }, [ready, reduced])
 
   return null

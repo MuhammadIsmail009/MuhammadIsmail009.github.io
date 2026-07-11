@@ -76,7 +76,15 @@ export function SecurityGraph() {
     })
     nodes.current.instanceMatrix.needsUpdate = true
     if (nodes.current.instanceColor) nodes.current.instanceColor.needsUpdate = true
-  }, [pts, active, dummy])
+
+    // Packets are positioned in useFrame; until the first frame runs they sit at the
+    // identity matrix (unit spheres stacked at the origin) and read as a white blob.
+    dummy.position.set(0, 0, 0)
+    dummy.scale.setScalar(0)
+    dummy.updateMatrix()
+    travellers.forEach((_, i) => packets.current.setMatrixAt(i, dummy.matrix))
+    packets.current.instanceMatrix.needsUpdate = true
+  }, [pts, active, dummy, travellers])
 
   useFrame((state, dt) => {
     if (document.hidden) return
