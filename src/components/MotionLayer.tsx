@@ -47,7 +47,6 @@ function buildNavState() {
  * Site-wide scroll choreography. Renders nothing; owns the global motion that
  * isn't local to one component:
  *   - [data-reveal]      → fade/rise in on scroll (batched, staggered)
- *   - [data-work-card]   → horizontal-track card stagger
  *   - [data-counter]     → count up from 0 when scrolled into view
  *   - [data-magnetic]    → magnetic hover
  *   - [data-nav]         → condensed state past the hero + active-link scrollspy
@@ -71,7 +70,6 @@ export function MotionLayer({ ready }: { ready: boolean }) {
       // hidden state is in place behind the preloader curtain before it lifts.
       // Headings ([data-split]) are handled by the line reveal below.
       gsap.set('[data-reveal]:not([data-split])', { opacity: 0, y: 36 })
-      gsap.set('[data-work-card]', { opacity: 0, y: 48 })
       gsap.set('[data-split]', { opacity: 0 })
 
       if (!ready) return
@@ -115,22 +113,6 @@ export function MotionLayer({ ready }: { ready: boolean }) {
           }),
         )
       }, 1500)
-
-      ScrollTrigger.batch('[data-work-card]', {
-        start: 'top 92%',
-        onEnter: (els) =>
-          gsap.to(els, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: EASE.expo,
-            stagger: 0.12,
-            overwrite: true,
-            // Drop the inline transform once revealed so CSS hover-lift is free
-            // to take over without fighting GSAP's translate.
-            onComplete: () => gsap.set(els, { clearProps: 'transform' }),
-          }),
-      })
 
       // Velocity-reactive marquee: scroll speed scales the drift and shears the
       // track. Replaces the CSS keyframe loop (which can't change speed) with a
