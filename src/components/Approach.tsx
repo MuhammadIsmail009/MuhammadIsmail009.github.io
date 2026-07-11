@@ -1,5 +1,6 @@
 import { APPROACH } from '@/lib/content'
 import { Section, SectionHeader } from '@/components/ui'
+import { ApproachPipeline } from '@/components/ApproachPipeline'
 
 /** Methodology — how the work gets done, in four numbered moves. */
 export function Approach() {
@@ -12,9 +13,17 @@ export function Approach() {
         className="mb-16"
       />
 
+      {/* live pipeline — the event rides the wire and lights each gate below */}
+      <ApproachPipeline />
+
       <ol className="grid gap-px overflow-hidden rounded-xl border border-hairline bg-hairline sm:grid-cols-2 xl:grid-cols-4">
         {APPROACH.steps.map((s) => (
-          <li key={s.n} className="group relative bg-canvas p-7 sm:p-8" data-reveal>
+          <li
+            key={s.n}
+            className="group relative bg-canvas p-7 sm:p-8"
+            data-reveal
+            data-approach-step
+          >
             <span
               className="font-display text-5xl font-semibold text-surface-2 transition-colors duration-500 group-hover:text-accent/25"
               aria-hidden
