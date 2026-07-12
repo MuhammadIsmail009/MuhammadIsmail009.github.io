@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { NAV, CONTACT, SOC } from '@/lib/content'
+import { NAV, CONTACT } from '@/lib/content'
 import { scrollTo } from '@/lib/scroll'
-import { SOC_BOOT_EVENT } from '@/components/CommandPalette'
 
 function Monogram() {
   return (
@@ -97,7 +96,7 @@ export function Nav() {
                 className="group relative font-mono text-sm text-muted transition-colors duration-300 hover:text-fg"
                 data-magnetic
               >
-                <span data-scramble>{n.label}</span>
+                <span>{n.label}</span>
                 <span className="absolute -bottom-1 left-0 h-px w-0 bg-accent transition-all duration-300 group-hover:w-full" />
               </a>
             </li>
@@ -105,15 +104,6 @@ export function Nav() {
         </ul>
 
         <div className="hidden items-center gap-2.5 md:flex">
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent(SOC_BOOT_EVENT))}
-            className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/5 px-4 py-1.5 font-mono text-xs text-accent transition-colors duration-300 hover:border-accent hover:bg-accent/10"
-            data-magnetic
-          >
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent animate-pulse-soft" aria-hidden />
-            {SOC.toggleLabel}
-          </button>
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent('palette:open'))}
@@ -188,22 +178,10 @@ export function Nav() {
             </li>
           ))}
         </ul>
-        <button
-          type="button"
-          tabIndex={open ? 0 : -1}
-          onClick={() => {
-            setOpen(false)
-            window.dispatchEvent(new CustomEvent(SOC_BOOT_EVENT))
-          }}
-          className="mt-10 inline-flex w-fit items-center gap-2 rounded-full border border-accent/40 bg-accent/5 px-5 py-2 font-mono text-sm text-accent"
-        >
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent animate-pulse-soft" aria-hidden />
-          Boot {SOC.toggleLabel}
-        </button>
         <a
           href={`mailto:${CONTACT.email}`}
           tabIndex={open ? 0 : -1}
-          className="mt-6 font-mono text-sm text-muted transition-colors hover:text-accent"
+          className="mt-10 font-mono text-sm text-muted transition-colors hover:text-accent"
         >
           {CONTACT.email}
         </a>

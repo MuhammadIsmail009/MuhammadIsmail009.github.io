@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { CONTACT, PROJECTS, SECTION_INDEX } from '@/lib/content'
 import { scrollTo } from '@/lib/scroll'
-import { DOSSIER_EVENT } from '@/components/Dossier'
 
 interface Action {
   id: string
@@ -12,10 +11,7 @@ interface Action {
   run: () => void
 }
 
-/** Fired by the palette / nav / terminal to boot the SOC workstation. */
-export const SOC_BOOT_EVENT = 'soc:boot'
-
-/** substring beats subsequence beats nothing. */
+/** Simple ranked match: substring first, then in-order character subsequence. */
 function score(a: Action, q: string): number {
   if (!q) return 1
   const s = `${a.label} ${a.hint} ${a.kw ?? ''}`.toLowerCase()
@@ -34,7 +30,8 @@ export function CommandPalette() {
   const [cursor, setCursor] = useState(0)
   const [toast, setToast] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
-  const listRef = useRef<HTMLUListElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const restoreRef = useRef<HTMLElement | null>(null)
   const toastT = useRef<number>()
 
   const notify = (msg: string) => {
@@ -43,73 +40,62 @@ export function CommandPalette() {
     toastT.current = window.setTimeout(() => setToast(''), 1600)
   }
 
+  // Don't leave a toast timer running past unmount.
+  useEffect(() => () => window.clearTimeout(toastT.current), [])
+
   const actions = useMemo<Action[]>(
     () => [
       ...SECTION_INDEX.filter((s) => s.id !== 'hero').map((s) => ({
         id: `go-${s.id}`,
-        label: `Go to ${s.label}`,
+        label: `Jump to ${s.label}`,
         hint: 'section',
         run: () => scrollTo(`#${s.id}`),
       })),
-      {
-        id: 'soc',
-        label: 'Boot ISMAIL SOC',
-        hint: 'the fun part',
-        kw: 'workstation desktop linux os',
-        run: () => window.dispatchEvent(new CustomEvent(SOC_BOOT_EVENT)),
-      },
-      {
-        id: 'dossier',
-        label: 'Passive DNA — what your browser leaks',
-        hint: 'scan',
-        kw: 'recon fingerprint privacy intel dossier tracking',
-        run: () => window.dispatchEvent(new CustomEvent(DOSSIER_EVENT)),
-      },
       ...PROJECTS.filter((p) => p.link).map((p) => ({
         id: `repo-${p.id}`,
-        label: `Open ${p.title} repo`,
-        hint: 'github',
-        kw: 'project code repo source',
+        label: `${p.title} — source`,
+        hint: 'repo',
+        kw: 'project code github',
         run: () => window.open(p.link!, '_blank', 'noopener'),
       })),
       {
         id: 'cv',
-        label: 'View CV',
+        label: 'Read my CV',
         hint: 'pdf',
-        kw: 'resume download',
+        kw: 'resume download curriculum',
         run: () => window.open('/Muhammad-Ismail-Resume.pdf', '_blank', 'noopener'),
       },
       {
         id: 'copy-email',
-        label: 'Copy email address',
+        label: 'Copy email',
         hint: CONTACT.email,
-        kw: 'contact mail',
+        kw: 'contact mail address',
         run: () =>
           void navigator.clipboard
             ?.writeText(CONTACT.email)
-            .then(() => notify('Email copied ✓'))
+            .then(() => notify('copied to clipboard'))
             .catch(() => {}),
       },
       {
         id: 'github',
-        label: 'Open GitHub',
+        label: 'GitHub profile',
         hint: CONTACT.githubLabel,
         run: () => window.open(CONTACT.github, '_blank', 'noopener'),
       },
       {
         id: 'linkedin',
-        label: 'Open LinkedIn',
+        label: 'LinkedIn profile',
         hint: CONTACT.linkedinLabel,
-        kw: 'connect',
+        kw: 'connect network',
         run: () => window.open(CONTACT.linkedin, '_blank', 'noopener'),
       },
       {
-        id: 'hire',
-        label: 'sudo hire-ismail',
-        hint: '☺',
-        kw: 'job internship recruit available work together',
+        id: 'page',
+        label: 'Page the on-call analyst',
+        hint: 'opens mail',
+        kw: 'hire job internship recruit contact reach out escalate',
         run: () => {
-          window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent("Let's work together")}`
+          window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent('Paging Ismail — got a minute?')}`
         },
       },
     ],
@@ -145,13 +131,44 @@ export function CommandPalette() {
     }
   }, [])
 
+  // Open: remember the invoker, lock background scroll, focus the input.
+  // Close: restore both.
   useEffect(() => {
-    if (open) {
-      setQuery('')
-      setCursor(0)
-      // Focus after the element exists.
-      requestAnimationFrame(() => inputRef.current?.focus())
+    if (!open) return
+    restoreRef.current = document.activeElement as HTMLElement | null
+    document.documentElement.style.overflow = 'hidden'
+    setQuery('')
+    setCursor(0)
+    requestAnimationFrame(() => inputRef.current?.focus())
+    return () => {
+      document.documentElement.style.overflow = ''
+      restoreRef.current?.focus?.()
     }
+  }, [open])
+
+  // Keep keyboard focus inside the dialog while it's open.
+  useEffect(() => {
+    if (!open) return
+    const onTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return
+      const panel = panelRef.current
+      if (!panel) return
+      const items = Array.from(
+        panel.querySelectorAll<HTMLElement>('input, button:not([disabled])'),
+      ).filter((el) => el.offsetParent !== null)
+      if (!items.length) return
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    window.addEventListener('keydown', onTab)
+    return () => window.removeEventListener('keydown', onTab)
   }, [open])
 
   useEffect(() => setCursor(0), [query])
@@ -193,6 +210,7 @@ export function CommandPalette() {
       aria-label="Command palette"
     >
       <div
+        ref={panelRef}
         className="w-full max-w-lg overflow-hidden rounded-xl border border-hairline bg-surface shadow-2xl shadow-black/60"
         onClick={(e) => e.stopPropagation()}
       >
@@ -214,7 +232,7 @@ export function CommandPalette() {
           </kbd>
         </div>
 
-        <ul ref={listRef} className="max-h-[46vh] overflow-y-auto py-2" role="listbox">
+        <ul className="max-h-[46vh] overflow-y-auto py-2" role="listbox">
           {filtered.length === 0 ? (
             <li className="px-4 py-3 font-mono text-sm text-faint">no matches — try 'work'</li>
           ) : (

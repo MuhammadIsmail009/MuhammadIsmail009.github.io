@@ -66,21 +66,6 @@ export function Hero() {
   const root = useRef<HTMLElement>(null)
   const webgl = useMemo(() => supportsWebGL(), [])
 
-  // Rotating focus ticker — cycles the disciplines on shift.
-  const [focusIdx, setFocusIdx] = useState(0)
-  const [focusOut, setFocusOut] = useState(false)
-  useEffect(() => {
-    if (reduced) return
-    const id = window.setInterval(() => {
-      setFocusOut(true)
-      window.setTimeout(() => {
-        setFocusIdx((i) => (i + 1) % SITE.focus.length)
-        setFocusOut(false)
-      }, 380)
-    }, 2600)
-    return () => window.clearInterval(id)
-  }, [reduced])
-
   // The 3D scene is a desktop enhancement: on phones/tablets the SVG backdrop is
   // the intended visual, which keeps three.js off mobile entirely (battery, data,
   // and the mobile-Lighthouse budget). It also mounts only once the page is idle
@@ -223,20 +208,10 @@ export function Hero() {
           </span>
           {STATUS.short}
         </span>
-        <span className="flex items-baseline gap-2 font-mono text-[0.65rem] tracking-[0.15em] text-faint">
-          FOCUS —
-          <span
-            className={`inline-block text-accent transition-all duration-300 ease-out ${
-              focusOut ? '-translate-y-1 opacity-0' : 'translate-y-0 opacity-100'
-            }`}
-          >
-            {SITE.focus[focusIdx]}
-          </span>
-        </span>
       </div>
 
       {/* scroll cue */}
-      <div className="absolute bottom-7 left-1/2 hidden -translate-x-1/2 items-center gap-3 sm:flex">
+      <div className="absolute bottom-7 right-gutter hidden items-center gap-3 sm:flex" data-hero-fade>
         <span className="kicker">scroll</span>
         <span className="relative block h-10 w-px overflow-hidden bg-accent/15">
           <span
@@ -244,17 +219,6 @@ export function Hero() {
             className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-accent to-transparent"
           />
         </span>
-      </div>
-
-      {/* coordinates */}
-      <div
-        className="absolute bottom-7 right-gutter hidden flex-col items-end gap-0.5 font-mono text-xs text-faint sm:flex"
-        data-hero-fade
-        aria-hidden
-      >
-        {SITE.coords.map((c) => (
-          <span key={c}>{c}</span>
-        ))}
       </div>
     </section>
   )

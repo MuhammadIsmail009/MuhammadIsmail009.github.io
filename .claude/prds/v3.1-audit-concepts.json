@@ -1,0 +1,650 @@
+{
+  "summary": "Audit v3 for derivative features vs Abubakar, ideate original signature interactions, judge-rank them",
+  "agentCount": 8,
+  "logs": [
+    "Audit: 17 derivative, 6 bloat, 9 original",
+    "20 concepts generated"
+  ],
+  "result": {
+    "audit": {
+      "derivative": [
+        {
+          "feature": "\"Passive DNA\" browser-fingerprint dossier (src/components/Dossier.tsx)",
+          "file": "src/components/Dossier.tsx",
+          "why": "Near-verbatim clone of Abubakar's Recon Mirror (recon.js). Same modal concept and layout, kicker '// PASSIVE DNA' vs his '// PASSIVE RECON', identical safebar copy '0 bytes transmitted · gathered client-side in Xms · nothing left this page', same fingerprint-hash + uniqueness meter, identical button label 'Copy my fingerprint', and the closing line 'Every site you open reads this in milliseconds — no permission prompt, no click' is his sentence word-for-word. On his site it exists to promote his Phantom Identity project; Ismail has no such project, so it has no story either.",
+          "severity": "blatant"
+        },
+        {
+          "feature": "Detection-pipeline canvas in Approach (src/components/ApproachPipeline.tsx)",
+          "file": "src/components/ApproachPipeline.tsx",
+          "why": "Line-for-line TypeScript port of his initApproachPipeline: same 1.1s travel / 0.6s dwell constants, same easing formula, same bracket-gate drawing, same [6,14] dash pattern with -flow*30 offset, same 22dpr halo, 12+k*7 containment rings, rotating 7dpr diamond, '01'-padded gate numbers, gates lighting the step cards via an is-active class. Only the color constants changed (his rust→lime, Ismail's threat-red→ember). Anyone who has seen his Approach section will recognize this instantly — it is his most distinctive custom animation.",
+          "severity": "blatant"
+        },
+        {
+          "feature": "ISMAIL SOC workstation mode (src/components/soc/SocMode.tsx + BootLog.tsx + WindowFrame.tsx)",
+          "file": "src/components/soc/SocMode.tsx",
+          "why": "Structural reskin of 'Abubakar Linux' (linux.js): boot splash with progress → full-screen desktop with icon grid, draggable windows with mac traffic-light title bars, a bottom dock with active-app indicators, an interactive terminal window, an embedded mini-game, a menu-bar live clock, and an exit toggle. The entire 'site reboots into an OS' conceit is his headline feature. SOC skin instead of Linux skin doesn't change what a visitor perceives: same site, different wallpaper.",
+          "severity": "blatant"
+        },
+        {
+          "feature": "\"kryptctl\" shell branding",
+          "file": "src/components/Terminal.tsx",
+          "why": "Terminal.tsx:143, SocMode.tsx:101-103, content.ts:437/472 name the shell 'kryptctl' — 'krypt' is literally Abubakar's personal brand (GitHub handle kryptbakar, 'Krypt Craft' game, 'Abubakar Linux (Krypt)' distro). Ismail's site is carrying his friend's handle. Worst single offender; must be renamed regardless of any other decision.",
+          "severity": "blatant"
+        },
+        {
+          "feature": "Experience rendered as a git log",
+          "file": "src/components/Experience.tsx",
+          "why": "Direct copy of his experience section device: 'commit <hash> (HEAD → main)' on the first entry, 'Author: <handle> <email>', 'Date: <period> · <city>' lines, dot-on-branch rail. His markup (exp__commit / exp__hash / (HEAD → main)) matches Ismail's line-for-line including fake commit hashes stored in content. This is a signature presentation, not a common pattern.",
+          "severity": "blatant"
+        },
+        {
+          "feature": "Footer email decrypt + 'secure channel' status line",
+          "file": "src/components/Footer.tsx",
+          "why": "His initContactReveal exactly: email scrambles into place when the contact section scrolls into view, status flips from 'establishing secure channel…' to a '…channel established · ready to connect' line ('secure channel established' vs his 'encrypted channel established' — one word changed).",
+          "severity": "blatant"
+        },
+        {
+          "feature": "⌘K command palette with the same command inventory",
+          "file": "src/components/CommandPalette.tsx",
+          "why": "Command palettes are generic web craft, but this one mirrors his command list item-for-item: go-to-section entries, 'Open <project> repo', 'Copy email address' with an 'Email copied ✓' toast, CV download, GitHub/LinkedIn, 'sudo hire-ismail' with the identical '☺' hint (his: 'sudo hire-me', hint '☺'), a '…what your browser leaks' entry launching the fingerprint modal (his: 'Recon Mirror — what your browser leaks'), an entry booting the OS mode, plus the same substring-beats-subsequence scoring function. The nav also carries the same ⌘K chip his nav has.",
+          "severity": "blatant"
+        },
+        {
+          "feature": "Pinned horizontal work track with 01/NN counter + progress-line HUD",
+          "file": "src/components/Work.tsx",
+          "why": "His initWork exactly: GSAP pin + scrub of a horizontal track, dist() = scrollWidth - innerWidth, a padded '01 / 06' counter and a scaleX progress hairline updated in onUpdate, giant ghost numerals on each card. Horizontal work scrolls exist elsewhere, but the counter+progress HUD combination and section framing ('/ 03 — Selected Work' vs his '(03) — Selected Work') make it read as the same site.",
+          "severity": "noticeable"
+        },
+        {
+          "feature": "Hero status cluster: live PKT clock + rotating discipline ticker + corner coordinates + scroll-cue line",
+          "file": "src/components/Hero.tsx",
+          "why": "His hero has all four: [data-clock] PKT clock, initRoles rotating discipline, '31.5204° N, 74.3587° E' coordinates embed (Ismail's SITE.coords are the identical strings — both Lahore, but as a design element it's lifted), and a hero__cue-line scroll cue. Each alone is defensible; the full cluster in the same hero corners is his composition.",
+          "severity": "noticeable"
+        },
+        {
+          "feature": "'// IDENTITY' quick-facts card in About with tilt + spotlight",
+          "file": "src/components/About.tsx",
+          "why": "His idcard is headed '// IDENTITY' with rows BASED IN / FOCUS / DEGREE / STATUS and count-up stats, plus a 3D-tilt profile card and cursor-spotlight on cards. Ismail's v3 added a card headed '// IDENTITY' with rows Degree / Based in / Focus / Status carrying data-tilt + data-spotlight. Same label, same rows, same hover physics.",
+          "severity": "noticeable"
+        },
+        {
+          "feature": "Contextual cursor labels OPEN / VIEW / MAIL",
+          "file": "src/components/Cursor.tsx",
+          "why": "The dot+ring cursor predates v3 and is generic, but v3 added the label pill with his exact label vocabulary on the same target types: OPEN on project links, VIEW on archive rows, MAIL on the email (his initCursor sets OPEN/VIEW/MAIL/PDF on the same selectors).",
+          "severity": "noticeable"
+        },
+        {
+          "feature": "Hover-decrypt scramble on nav/footer links (data-scramble)",
+          "file": "src/lib/scramble.ts",
+          "why": "His initScramble signature: links re-resolve through character scramble on mouseenter, applied via the same data-scramble attribute on nav links. Scramble text is a known GSAP trick, but as an attribute-driven site-wide link treatment it mirrors him directly.",
+          "severity": "noticeable"
+        },
+        {
+          "feature": "Card tilt + cursor-spotlight glow utilities",
+          "file": "src/lib/cardfx.ts",
+          "why": "Mirrors his initTilt (3D tilt on the profile card) and initSpotlight (cursor-tracked radial glow via CSS custom props on cards). Both are common awwwards-style effects, so only subtle — but they arrived as a pair, matching his pair.",
+          "severity": "subtle"
+        },
+        {
+          "feature": "Velocity-reactive marquee with scroll-skew",
+          "file": "src/components/MotionLayer.tsx",
+          "why": "The marquee itself predates v3, but v3 replaced the CSS loop with his initMarquees mechanic: drift timeScale follows scroll velocity, track skews with velocity, settles after a delay. Common enough technique to stay subtle.",
+          "severity": "subtle"
+        },
+        {
+          "feature": "Top scroll-progress bar",
+          "file": "src/components/Chrome.tsx",
+          "why": "He has initScrollProgress doing the same scaleX top bar. Extremely common pattern — flagged only because it arrived in the same batch as everything else.",
+          "severity": "subtle"
+        },
+        {
+          "feature": "Archive ledger section at index / 04 directly after Work",
+          "file": "src/components/Archive.tsx",
+          "why": "His '(04) — Archive' is also a flat list of smaller builds right after Selected Work with hover arrows. Ismail's version drops his canvas hover-previews and list-archives are common, but the name, position, and row anatomy echo his.",
+          "severity": "subtle"
+        },
+        {
+          "feature": "Count-up stat counters",
+          "file": "src/components/MotionLayer.tsx",
+          "why": "His idcard uses data-count count-ups; v3 wired data-counter count-ups. Generic portfolio furniture — subtle.",
+          "severity": "subtle"
+        }
+      ],
+      "original": [
+        "DefenseGame (src/components/soc/DefenseGame.tsx) — the click-to-block network-defense toy itself is Ismail's own mechanic (hostiles crawling toward network segments, SOC live feed, threat meter). Abubakar's in-OS game is a voxel sandbox; only the 'game hidden inside the OS mode' framing is his. If any SOC-mode piece survives a rework, this is the one with original DNA.",
+        "Interactive terminal shell with command history (src/components/Terminal.tsx, TerminalShell) — predates v3 and is genuinely different from Abubakar's on-page terminal, which is a non-interactive type-on-scroll display. Ismail's personality commands (f1, anime, tennis, sudo joke) are his own voice. Needs the 'kryptctl' name replaced, nothing else.",
+        "Hero red/blue tagline split — 'Attacker's mindset.' (ember) / 'Defender's discipline.' (teal) decoding in sequence is Ismail's own identity device and color story; Abubakar has nothing like it.",
+        "Left-rail section-index dots (Chrome.tsx) — Abubakar has scroll-spy nav links but no fixed dot rail; this is generic web craft done in Ismail's own way.",
+        "Approach section content and 4-step grid (Approach.tsx) — the Model → Detect → Triage → Harden methodology, copy, and numbered card grid are Ismail's; only the canvas above them is copied.",
+        "Hero SVG constellation fallback + three.js SecurityGraph (pre-v3, tuned in v3) — his own 3D security-graph scene; Abubakar's hero canvas is a 2D flow field.",
+        "SOC-flavored boot-line and feed copy in content.ts (eBPF collector, 412 YARA rules, EPSS/KEV enrichment) — the words are authentically Ismail's SOC identity even where the container they appear in is derivative.",
+        "Experience truth content (Ebryx / NCERT / PITB roles and summaries), Dossier-independent About/Identity facts, and the ember+teal palette v2 — all Ismail's substance.",
+        "Mobile full-screen nav overlay with focus trap (Nav.tsx) — standard accessible pattern, implemented independently."
+      ],
+      "bloat": [
+        "SocMode desktop as a whole (~700 lines incl. BootLog/WindowFrame/dock): beyond being derivative, its windows (README, work/, contact.vcf) just duplicate content the page already shows — a heavy gimmick with three separate promotional entry points (nav pill, palette command, terminal command). If the goal is 'nothing unnecessary', this is the biggest single cut.",
+        "Dossier fingerprint modal: on Abubakar's site it demos his Phantom Identity product; Ismail has no fingerprinting project, so it's an unmotivated party trick with no tie to his work.",
+        "DefenseGame: fun and mechanically original, but a toy game is hard to justify on a professional SOC portfolio once its only container (SOC mode) is in question.",
+        "Fake git commit hashes in Experience (content.ts hash fields): cosplay metadata that adds no information and can read as trying too hard — the roles speak for themselves.",
+        "Effect stacking in v3: cursor label pill + hover scramble + magnetic + tilt + spotlight + velocity-skew marquee + scanlines all at once pushes past 'crafted' into 'template-y'; two or three signature motions would land harder than seven.",
+        "Triple redundancy of navigation: nav links + command palette + left dot rail + footer links all reach the same eight sections."
+      ],
+      "abubakar_signatures": [
+        "Recon Mirror: passive browser-fingerprint dossier modal with '0 bytes transmitted' safebar, entropy/uniqueness meter, device-hash line, and 'Copy my fingerprint' button",
+        "Approach pipeline canvas: a packet/diamond riding a wire through numbered bracket gates that pulse and light the step cards below",
+        "Alternate-OS mode: 'Abubakar Linux' — boot splash → desktop with icons, draggable traffic-light windows, dock, in-OS interactive terminal (neofetch), live wallpaper, and an embedded mini-game (Krypt Craft)",
+        "Experience as a git log: 'commit <hash> (HEAD → main)' / 'Author:' / 'Date:' entries on a branch rail",
+        "Contact 'secure channel' reveal: email decrypts on scroll-into-view while the status flips from 'establishing secure channel…' to '…channel established · ready to connect'",
+        "⌘K palette command set: 'sudo hire-me', '…what your browser leaks' scanner entry, feature-launcher commands, 'Email copied ✓' toast, ☺ hint",
+        "Pinned horizontal Selected Work track with '01 / 06' counter + progress hairline HUD and giant ghost numerals",
+        "Cursor label vocabulary OPEN / VIEW / MAIL / PDF on a dot+ring cursor; hover-decrypt (data-scramble) links",
+        "Hero composition: rotating discipline ticker + live PKT clock + '31.5204° N, 74.3587° E' coordinates corner + caret scroll cue + 'SECURE BOOT // % / ACCESS GRANTED' loader",
+        "'// IDENTITY' idcard with count-up stats, BASED IN/FOCUS/DEGREE/STATUS rows, 3D tilt + cursor spotlight",
+        "Velocity-reactive skewing marquee",
+        "The brand word 'krypt' in any form (kryptbakar, kryptctl, Krypt Craft)",
+        "Not yet copied — keep it that way: rain/storm weather toggle, physics drag-the-nodes skills graph, RSA/PGP encrypted-message contact, hidden CTF vault ('can you breach it?'), always-visible feature dock, archive hover-preview canvas dashboards"
+      ]
+    },
+    "ranked": [
+      {
+        "name": "One Alert, Four Moves (Evidence Pane)",
+        "pitch": "Instead of an abstract packet-on-a-wire animation, the Approach section dissects one real alert: a raw JSON log of encoded PowerShell spawning from a Word doc, transformed live through Model, Detect, Triage, Harden. Methodology stops being claimed and gets demonstrated on actual evidence — any security hiring manager recognizes the artifact instantly, and no other portfolio does this.",
+        "mechanic": "Sticky split layout: the four step cards scroll on the left while a pinned 'evidence pane' on the right holds one pre-authored syntax-highlighted event log. GSAP ScrollTrigger drives four states — step 1 highlights the attack-surface fields with <mark> spans, step 2 overlays the matching detection rule condition and an ATT&CK T1059.001 chip, step 3 appends EPSS/KEV enrichment lines and stamps a severity verdict, step 4 shows a two-line diff of the tuned rule plus the control it maps to. Pure DOM/CSS transitions on pre-rendered spans; mobile collapses to tap-through tabs.",
+        "where": "Approach section (replaces the canvas above the 4-step grid; the grid and copy stay)",
+        "replaces": "ApproachPipeline.tsx detection-pipeline canvas (blatant Abubakar clone)",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "soc-authentic",
+        "avg": 8.8,
+        "judgeNotes": [
+          "Walking one recognizable artifact (encoded PS from a maldoc) through model/detect/triage/harden with ATT&CK, EPSS/KEV and a rule-tuning diff is methodology demonstrated on evidence — exactly what a SOC hiring manager screens for, and instantly interview-defensible.",
+          "A pinned evidence pane that triages one real encoded-PowerShell log through four states is demonstration instead of decoration — no other security portfolio dissects an actual artifact, and the sticky-split mechanic serves the content rather than performing.",
+          "Pre-rendered spans plus one sticky ScrollTrigger is cheap, degrades cleanly to tabs on mobile, and the payoff (real artifact instead of decoration) is the highest credibility-per-line-of-code on the list."
+        ]
+      },
+      {
+        "name": "Detected by Design (Sigma rule cards)",
+        "pitch": "Every Selected Work card carries the actual Sigma rule that would catch the threat class the project defends against — flip a card and you get valid, runnable YAML with MITRE technique chips linking to attack.mitre.org. It turns the portfolio into a detection artifact repository: recruiters who know Sigma will screenshot it, and it proves the 'detection engineering' claim with primary evidence rather than adjectives.",
+        "mechanic": "Vertical/stacked work cards (killing the pinned horizontal HUD track). Each card gets a 'VIEW RULE' toggle that expands a monospace panel: pre-authored, syntactically valid Sigma YAML (title, logsource, detection/condition, level, tags: attack.t1059) with lightweight regex token coloring, plus severity badge and ATT&CK chips. GSAP height/opacity expand, prefers-reduced-motion falls back to instant toggle. Static content in content.ts — six short rules Ismail actually writes and can defend in an interview.",
+        "where": "Selected Work section",
+        "replaces": "Work.tsx pinned horizontal track with 01/06 counter + progress hairline + ghost numerals (noticeable copy)",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "soc-authentic",
+        "avg": 7.7,
+        "judgeNotes": [
+          "Runnable Sigma YAML per project is primary evidence of detection engineering rather than an adjective, and every rule is a ready-made interview question Ismail can win — the highest signal-per-pixel concept here.",
+          "Runnable Sigma YAML per project is superb primary evidence, but the mechanic itself is a plain expand-toggle code panel — the originality lives entirely in the content, not the craft move.",
+          "Static YAML expand panels are trivially safe and highly screenshot-able, but it quietly bundles a full Work-section layout rebuild plus authoring six defensible Sigma rules, so the M estimate is optimistic."
+        ]
+      },
+      {
+        "name": "ATT&CK Coverage Heatmap",
+        "pitch": "His skill stack rendered the way a SOC lead actually grades a team: a MITRE ATT&CK tactic-coverage heat strip — 12 tactic columns whose cells warm from teal to ember where his tools, projects, and roles give him coverage. Hovering a tactic reveals exactly what covers it ('Execution — YARA rules in SOC Central, Splunk detections at PITB'), replacing generic chip clouds with the single most credibility-dense visualization a blue-team portfolio can have.",
+        "mechanic": "SVG/CSS grid of tactic columns with 2-4 cells each; intensity data hand-mapped in content.ts from his real experience. On scroll-into-view, cells stagger-fill via GSAP; hover (or tap on mobile) opens a small anchored popover listing the covering tools/projects with links into Work. Honest gaps stay dark — a deliberate credibility signal ('I don't claim Impact coverage'). Fully static data, no canvas, keyboard-focusable cells for A11y 100.",
+        "where": "Stack section (above or instead of the current chip groups)",
+        "replaces": "Count-up stat counters + part of the chip redundancy (bloat/subtle items); additive to Stack's core",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "soc-authentic",
+        "avg": 7.5,
+        "judgeNotes": [
+          "Presenting skills as tactic coverage with honestly dark gaps is precisely how SOC leads grade teams, and the honesty itself is a senior-reading credibility signal — docked one point because a junior's 'coverage' claims need careful calibration to avoid overreach.",
+          "Honest dark gaps and hand-mapped coverage make it credibility-dense, but ATT&CK Navigator heatmaps are a well-worn artifact in the field and a skills matrix is a known portfolio genre — smart substitution, not a signature move.",
+          "Hand-mapped static data in an SVG grid is near-zero perf risk, mobile-friendly, and the honest-gaps framing is high payoff — only the tap/hover popover a11y needs real care."
+        ]
+      },
+      {
+        "name": "Signal Trace",
+        "pitch": "The Approach section's divider is a single continuous telemetry waveform that your scroll literally draws — noisy raw signal under 'Model', thresholded spikes under 'Detect', one flagged spike with an annotation tick under 'Triage', and a clean flat baseline under 'Harden'. It tells his exact professional story (telemetry into signal into answer) in one line of ink, and it looks like an expensive custom instrument, not a widget. Nothing on Abubakar's site draws data-as-narrative; his pipeline is a packet riding gates — this is a waveform whose *character* changes.",
+        "mechanic": "One hand-authored SVG path spanning the section width, whose shape already varies along X (dense jitter → sparse spikes → single annotated peak → flatline). GSAP ScrollTrigger scrubs stroke-dashoffset so the pen tip tracks scroll position; the segment currently being drawn glows ember, drawn history settles to teal at 40% opacity; the pen-tip position also sets which step card is 'live' via a class. Reduced motion: fully-drawn static path. Pure SVG + one scrub — no canvas, no rAF loop.",
+        "where": "Approach — directly replacing the copied pipeline canvas above the 4-step grid",
+        "replaces": "ApproachPipeline.tsx (the blatant line-for-line canvas port)",
+        "effort": "S",
+        "perf_risk": "low",
+        "angle": "motion-craft",
+        "avg": 7.3,
+        "judgeNotes": [
+          "An elegant noise-to-signal metaphor that looks expensive, but it's one decorative line of ink — it gestures at the job without showing any of it.",
+          "One waveform whose character mutates from noise to flatline is data-as-narrative with a single disciplined mechanic — scroll-drawn SVG paths are known craft, but a line whose personality tells the methodology is a genuine signature per dollar of effort.",
+          "One hand-authored SVG path and a single dashoffset scrub replaces the cloned canvas with zero rAF loop and a perfect reduced-motion fallback — maximum visual payoff for the smallest mechanic on the list."
+        ]
+      },
+      {
+        "name": "End of Shift",
+        "pitch": "The contact section is rewritten as a shift handover — the one ritual every SOC runs and no portfolio uses: a log-printer feed prints 'END OF SHIFT · nothing got past · handing off to: [ you ]', and the visitor clicks ACKNOWLEDGE HANDOVER to accept — which copies his email and appends 'handover acknowledged · 21:47 local' to the log. It lands the whole narrative arc on a human note (the defender trusts YOU with the watch) and gives the CTA an interaction with actual meaning instead of a decrypt trick.",
+        "mechanic": "Receipt-printer feed, not typing: log lines slide up from under a hairline 'printer slot' one at a time (GSAP y-transform + clip, 90ms stagger), deliberately avoiding both his scramble-decrypt and his type-on-scroll terminal. The ACKNOWLEDGE button is a real button: click fires clipboard copy, prints the acknowledgment line with the visitor's local time (client Date only, nothing collected or shown back about them), and swaps the STATUS line from ON SHIFT to HANDED OFF. Email/LinkedIn/GitHub remain plain accessible links below. Reduced-motion: the full log renders instantly.",
+        "where": "Footer / Contact section",
+        "replaces": "The 'secure channel established' email-decrypt reveal in Footer.tsx",
+        "effort": "S",
+        "perf_risk": "low",
+        "angle": "narrative",
+        "avg": 7,
+        "judgeNotes": [
+          "The handover ritual is real SOC culture rendered warmly and the ACKNOWLEDGE interaction gives the CTA meaning, but it's tone and taste rather than skill evidence.",
+          "A receipt-printer feed with a click-to-ACKNOWLEDGE handover gives the CTA real interaction meaning and lands the narrative on a human note — the printer-slot mechanic is fresh, only the small scope keeps it from top marks.",
+          "S-effort receipt-printer reveal with a real clipboard button, plain links preserved, clean reduced-motion path — small, safe, and the ACKNOWLEDGE interaction gives the CTA actual meaning."
+        ]
+      },
+      {
+        "name": "KEV wire — a ticker that carries real intel",
+        "pitch": "Replace the derivative skills marquee with a live threat-intel wire: the most recent CISA Known Exploited Vulnerabilities scroll past as real entries — 'CVE-2026-XXXX · added 2d ago · Fortinet FortiOS · action due Jul 30'. Every other portfolio's marquee repeats buzzwords; his streams the same feed he actually triages at NCERT and cites in SOC Central. Recruiters who know the KEV catalog will do a double-take; ones who don't still see 'this person's site is plugged into something real'.",
+        "mechanic": "A GitHub Action on cron (daily) fetches the public CISA KEV JSON, trims to the newest ~15 entries, commits a small snapshot into /public, and Pages redeploys — zero backend, always-fresh-enough, never a runtime CORS gamble (optional client fetch on top, falling back to the snapshot). Rendered as the existing marquee band restyled as a wire-service ticker: steady CSS/GSAP loop (no velocity-skew), mono type, ember date stamps, a 'source: CISA KEV · synced <date>' hairline caption for honesty. prefers-reduced-motion gets a static three-row list.",
+        "where": "Marquee band between Hero and About",
+        "replaces": "Velocity-reactive skewing marquee (derivative mechanic) and its buzzword content",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "data-alive",
+        "avg": 7,
+        "judgeNotes": [
+          "Streaming the actual CISA KEV feed he triages at NCERT, with honest sourcing and a zero-backend cron pipeline, is a double signal: plugged into real intel and quietly good engineering.",
+          "Streaming the actual CISA KEV catalog he triages at work is real credibility with a zero-backend build, but the form remains a marquee ticker — authentic content poured into an unoriginal vessel.",
+          "The snapshot-commit pattern is the right architecture and the real-data payoff is strong, but it adds CI infrastructure to a static site (cron babysitting, Pages redeploy quirks) and a stale 'synced 3 months ago' caption actively hurts."
+        ]
+      },
+      {
+        "name": "You Are the Alert",
+        "pitch": "The visit itself becomes an incident: the moment you land, a quiet ticket opens on you — 'INC-2026-0712 · NEW · unknown entity on perimeter' — and scrolling the site IS the triage. The ticket advances through Ismail's own methodology stages (Modeled → Detected → Triaged → Hardened) as you pass each section, and at Contact it closes with 'DISPOSITION: BENIGN · RECOMMENDED ACTION: escalate to conversation.' It demonstrates how a SOC analyst thinks by doing it to the visitor — recruiters literally experience his workflow — and it's pure narrative tension with a warm punchline, zero party trick.",
+        "mechanic": "A small fixed corner chip (mono microtype, hairline border, ember status dot) driven by a ScrollTrigger state machine keyed to section entries. Each state change is a GSAP micro-stamp: old status slides out, new one drops in at 1.15 scale with a 2-degree settle and a one-frame teal tick. States carry flavor lines ('enriching context… reading About', 'reviewing evidence… 6 artifacts'). At #contact the chip expands once into a closure card with the benign verdict, then collapses to 'CASE CLOSED'. Pure DOM + GSAP, aria-hidden decorative, hidden below 768px or collapsed to a dot. Reads nothing from the browser — the story is scripted, which is exactly what separates it from Recon-Mirror territory.",
+        "where": "Site-wide chrome (fixed bottom-left corner), with its payoff beat inside Footer/Contact",
+        "replaces": "The left dot-rail (kills one leg of the triple-redundant nav) and fills the 'signature identity feature' hole left by cutting SocMode",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "narrative",
+        "avg": 6.8,
+        "judgeNotes": [
+          "Memorable narrative chrome, but it's admitted scripted theatre — it demonstrates storytelling about the workflow, not the workflow, and some managers will read the persistent ticket chip as cute rather than competent.",
+          "Making the visit itself the incident with a scripted state machine and a benign-verdict punchline is a coherent narrative spine nobody else has, though a fixed HUD status chip skirts the fake-dashboard-chrome cliché.",
+          "A scripted state machine driving one fixed chip is low-risk DOM work with a strong sitewide narrative payoff, and hiding it below 768px is an acceptable rather than great mobile story."
+        ]
+      },
+      {
+        "name": "Alert → Answer",
+        "pitch": "Every section headline arrives as a raw monospace alert line — '14:03:22Z · sev:high · msg:\"Selected Work\"' — and is then triaged in front of you: the metadata fields flick away and the quoted payload string physically travels and scales up into the big serif display headline. It turns his best sentence ('an alert is a question, not an answer') into the site's typographic system, and because it's a structural FLIP transform rather than character scrambling, it reads nothing like Abubakar's hover-decrypt. One idea, applied with total consistency — the Awwwards single-detail move.",
+        "mechanic": "Each section heading renders both states: a mono log row (timestamp, severity chip, payload in quotes) and the final display h2 with the payload span as the shared element. On scroll-into-view (once), GSAP Flip.from() morphs the payload span between layouts while sibling metadata fields exit with a 0.25s x-drift + fade and a 1px ember rule sweeps under the settled headline in teal. Reduced motion / repeat visits within session: final state only. ~5 headings site-wide, one-time triggers.",
+        "where": "Site-wide section headings (About, Approach, Work, Experience, Contact)",
+        "replaces": "data-scramble hover-decrypt on links + the scanline/effect-stacking clutter — this becomes THE text signature",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "motion-craft",
+        "avg": 6.8,
+        "judgeNotes": [
+          "Building the typographic system from correctly-formed alert anatomy (timestamp, sev, quoted payload) is quietly authentic and disciplined, though it signals taste more than detection skill.",
+          "Turning every headline into a triaged log payload via structural FLIP is a typographic system, not an effect — Awwwards rewards exactly this kind of one-idea-everywhere consistency, and it's cleanly distinct from scramble-decrypt clichés.",
+          "GSAP Flip on five one-time headings is feasible, but headline-level FLIP invites CLS/readability issues (content arriving as unreadable log lines above the fold) and consistency across all sections is more tuning than it looks."
+        ]
+      },
+      {
+        "name": "Incident Replay: 47 Seconds",
+        "pitch": "Replace the copied packet-on-wire canvas with a story: scrolling the Approach section scrubs a replay of one synthetic intrusion — recon, phish, foothold, lateral move — told in timestamped log lines, and each of Ismail's four methodology cards sits inline at the exact moment his step kills the attack. It ends on a stat card recruiters feel in their gut: 'dwell time: 00:00:47 · contained.' Nobody scroll-scrubs a narrated attack timeline where the methodology cards are the plot twists — it turns 'here are my 4 steps' into 'watch these 4 steps win.'",
+        "mechanic": "One vertical interleaved timeline (styled DOM + a single SVG spine, no canvas rAF loop): clusters of attacker log lines in threat-red mono ('03:12:09 outbound POST to unregistered domain') alternate with the existing four step cards restyled as teal INTERVENTION blocks. ScrollTrigger scrub reveals log lines with a clipped wipe (no character typing — avoids his type-on-scroll terminal); when the playhead crosses an intervention, the card snaps live and the red lines above it strike through. A scrubbed timecode counter runs in the section header. Reduced-motion: everything visible statically, fully readable as prose.",
+        "where": "Approach section — a structural rebuild, not a canvas above cards",
+        "replaces": "ApproachPipeline.tsx (the line-for-line pipeline canvas port) entirely",
+        "effort": "L",
+        "perf_risk": "medium",
+        "angle": "narrative",
+        "avg": 6.7,
+        "judgeNotes": [
+          "A kill-chain timeline where the methodology cards are the interventions, ending on dwell time, shows real incident-lifecycle fluency — strong story, though the log lines are synthetic so it proves understanding more than craft.",
+          "Methodology cards as plot twists in a scroll-scrubbed intrusion timeline is a strong editorial-scrollytelling adaptation with a gut-punch closing stat, docked slightly because narrated scrub timelines are a known NYT-style genre and it's the priciest build.",
+          "The payoff is real but this is a full structural rebuild of Approach with a long scrubbed timeline — scrub tuning, copywriting the attack, and scroll-length bloat make the L estimate the honest floor."
+        ]
+      },
+      {
+        "name": "Shift board — the contact section knows what time it is",
+        "pitch": "Instead of a fake 'secure channel' theatrically decrypting, the footer computes something true: it compares the visitor's clock to PKT and posts a handover note — 'It's 03:40 in Lahore · night shift · expect a reply after 09:00 PKT (your 11:00)', with a slim 24-hour shift bar showing his day/deep-work/off blocks and a marker for 'you are here'. It's SOC culture (shift handovers are sacred), it's genuinely useful to a recruiter deciding when to email, and no other portfolio treats contact as an ops schedule.",
+        "mechanic": "Pure Intl.DateTimeFormat math, zero network: derive PKT hour, map it onto a hand-tuned shift schedule array, and render an inline SVG 24h bar (three tinted blocks, teal 'now' marker for Lahore, hollow ember marker for the visitor's equivalent hour) plus one templated sentence. Updates once a minute. The email itself is plain, immediate, copyable text — no scramble, no status flip. ~80 lines, works identically on mobile and under reduced motion.",
+        "where": "Footer / contact section",
+        "replaces": "Footer email-decrypt + 'secure channel established' status line (blatant clone)",
+        "effort": "S",
+        "perf_risk": "low",
+        "angle": "data-alive",
+        "avg": 6.7,
+        "judgeNotes": [
+          "Genuinely useful, honest, and SOC-cultured — a recruiter learns when to email — but it's operational politeness, not detection competence.",
+          "Timezone-aware 'it's 3am here, reply after 9' footers already appear on plenty of personal sites; the 24h shift-bar viz and genuine usefulness lift it, but it's a refinement of a known courtesy, not a signature.",
+          "~80 lines of pure Intl math, zero network, identical on mobile and reduced-motion, and it is the only concept that is actually useful to the recruiter — near-ideal feasibility-to-payoff."
+        ]
+      },
+      {
+        "name": "Triage Queue",
+        "pitch": "Selected Work loads as what a SOC analyst actually sees — a tight monospace alert queue, six dim rows with severity ticks — and as you scroll, each row FLIP-expands in place into a full case-file card: tags, description, evidence links unfolding from the row's own geometry. Watching an alert queue get worked into cases is his day job made into layout choreography, it's vertical (mobile-safe, no pinning), and it's unmistakably different from any horizontal track with a counter HUD.",
+        "mechanic": "Render all six projects as compact rows (id, title, one-line meta, severity dot). A ScrollTrigger per row (once, ~70% viewport) runs Flip.from() between row-layout and card-layout of the same DOM node: container height animates, inner blocks (description, tag chips, link) fade/rise in with 0.05s stagger, and the severity dot draws a short teal 'resolved' rule. Rows not yet reached stay queue-styled, so the section visibly 'burns down' as you work it. Reduced motion: all cards expanded. Layout reads are per-card and one-time.",
+        "where": "Work section",
+        "replaces": "The pinned horizontal track + 01/06 counter + progress hairline + ghost numerals (the whole noticeable-severity Work.tsx device)",
+        "effort": "L",
+        "perf_risk": "medium",
+        "angle": "motion-craft",
+        "avg": 6.5,
+        "judgeNotes": [
+          "The burn-down from dim alert queue to worked cases is authentic and vertically honest, though list-row-to-card FLIP expansion is a known layout pattern — elevated accordion with excellent framing, at L effort.",
+          "Vertical and mobile-safe with a strong burn-down metaphor, but six per-row Flip height animations with staggered inner reveals is L-effort layout work with real jank risk on mid-range phones."
+        ]
+      },
+      {
+        "name": "detections.log — you are the telemetry",
+        "pitch": "The visitor's own behavior fires real Sigma-style detection rules Ismail wrote: rage-click, copy the email, scroll the whole page in under 8 seconds, go idle for 90s, open the site at 3am local — each raises a quiet, severity-tagged alert toast ('ISM-0042 · low · Rapid enumeration of /work'). Clicking any alert opens the actual rule source in YAML, so the party trick doubles as a work sample: this is literally the job he's hired for, demonstrated on you, with events — not device data — as the input. It cannot be mistaken for a fingerprint dossier because it never reads the device: no hash, no entropy meter, no modal, just a running detections ledger chip near the terminal section.",
+        "mechanic": "A tiny rule engine (plain TS, ~10 declarative rules with predicate + threshold + cooldown) subscribes to pointer/scroll/copy/visibility events already flowing through the page. Matches enqueue into a fixed-position mono toast (GSAP fade/slide, max 1 visible, aria-live polite) and append to a 'detections.log' ledger — a bordered mono panel that can also be tailed from the existing TerminalShell via a new `detections` command. Clicking an alert expands the Sigma-flavored YAML of the rule that caught you, syntax-tinted ember/teal. Desktop and mobile safe; rules gated to fire at most ~4 per visit so it stays classy.",
+        "where": "Site-wide event layer + ledger panel adjacent to the Terminal section; surfaced in-shell via a `detections` command",
+        "replaces": "Dossier.tsx fingerprint modal (blatant Recon Mirror clone) and its palette/terminal entry points",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "data-alive",
+        "avg": 6.5,
+        "judgeNotes": [
+          "Behavioral rules whose Sigma-flavored source opens on click turns the party trick into an inspectable work sample, works on mobile, and its event-not-device design shows real privacy/detection judgment.",
+          "Rules-as-work-sample is clever, but severity-tagged toasts firing on visitor behavior court annoyance, it overlaps You Are Being Triaged, and routing it through a `detections` shell command ties it to the exact terminal gimmick under indictment.",
+          "Lighter and safer than the triage-card cousin (event-based, mobile-safe, aria-live), but ten rules plus a ledger panel plus a terminal command is textbook scope creep for a feature that fires at most four quiet toasts."
+        ]
+      },
+      {
+        "name": "Noise floor — watch 10,000 events become 3 incidents",
+        "pitch": "Above the four Approach steps, a seismograph strip renders the whole thesis of SOC work: at 'Model' the band is dense static — thousands of raw events per second — and as you scroll through Detect, Triage, Harden the waveform audibly-in-visual-terms quiets, collapsing into a handful of discrete labeled ticks while a mono counter falls 10,000 evt/s → 412 rule hits → 42 alerts → 3 incidents. It's the anti-pipeline: no packet, no wire, no gates — the story isn't 'a thing travels through stages', it's 'noise becomes signal', which is Ismail's actual sentence about his job.",
+        "mechanic": "A short (~90px tall) canvas strip drawing a 1D noise field: per-column amplitude sampled from seeded value noise, redrawn only while a ScrollTrigger scrub is active. Scroll progress across the section drives a 'suppression' parameter that damps amplitude, thins column density, and promotes surviving spikes into crisp teal ticks with tiny rule-ID labels; the funnel counter tweens with the same scrub. Fully deterministic (seeded) so it never jitters on re-entry; capped at devicePixelRatio 1.5, paused off-screen, hidden below md breakpoint where the counter alone tells the story.",
+        "where": "Approach section, replacing the canvas above the Model→Detect→Triage→Harden grid",
+        "replaces": "ApproachPipeline.tsx (line-for-line port of Abubakar's gate-and-diamond canvas)",
+        "effort": "L",
+        "perf_risk": "medium",
+        "angle": "data-alive",
+        "avg": 6.3,
+        "judgeNotes": [
+          "The event-funnel (10k events → 3 incidents) is the truest single visualization of SOC work here and shows he understands the job's actual shape, but it's still an illustration rather than an artifact, with L effort and medium perf risk.",
+          "'Noise collapsing into signal' is the rare visualization that IS the thesis rather than illustrating it, and the anti-pipeline stance is genuinely original — held back by canvas/perf risk, mobile hiding, and mild ambient-noise-field adjacency.",
+          "The metaphor is the best of the Approach replacements but it re-introduces a tuned canvas with scrub-driven redraws and hides entirely on mobile, so half the audience gets only a counter for L-effort work."
+        ]
+      },
+      {
+        "name": "Shift Handoff Footer",
+        "pitch": "SOC shifts end with a handoff note, and so does the site: when you reach the footer it composes an end-of-shift summary of your own visit — 'session 06:14 · deepest dwell: Selected Work · sections toured: 7/9 · open item: one unread email to ismail' — computed in-memory from real IntersectionObserver data and gone on refresh. It is honest telemetry with a wink, makes the CTA feel earned instead of pasted on, and shares zero DNA with the decrypt-on-scroll 'secure channel' bit.",
+        "mechanic": "A tiny session tracker (IntersectionObserver + timestamps, ~40 lines, no storage, no network) feeds a template that renders as a plain ledger block above the contact links when the footer enters view: rows fade in staggered, timestamped in PKT, with the final row being the mailto CTA styled as the handoff's single open item. A one-line disclosure ('computed in this tab, kept in memory, discarded on close') keeps it professional. Email is printed plainly — no scramble, no status flip.",
+        "where": "Footer / Contact",
+        "replaces": "Footer.tsx email-decrypt + 'secure channel established' status line (blatant copy)",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "soc-authentic",
+        "avg": 5.8,
+        "judgeNotes": [
+          "Charming and honest but it proves telemetry whimsy, not detection skill — a nice garnish that makes nobody more hireable on its own.",
+          "Session-summary footers ('you scrolled 7/9 sections') already exist on indie portfolios; the SOC handoff framing is a nice reskin of a familiar visitor-telemetry wink rather than a new mechanic.",
+          "A ~40-line in-memory tracker is genuinely small and the payoff is charming, but it only lands for visitors who read the footer closely and the 'we watched you' wink needs the disclosure to work."
+        ]
+      },
+      {
+        "name": "Closed Cases",
+        "pitch": "Projects stop being cards on a copied horizontal track and become the analyst's case history: each project is a case jacket — CASE No. 01, subject, evidence list, and a stamp that slams down on scroll-in reading 'CLOSED — SHIPPED' (or 'ACTIVE' for SOC Central, his in-progress FYP). It pairs with 'You Are the Alert' into one coherent world — you're the live case, these are the precedents — and the stamp beat gives Work section the tactile signature moment the ghost-numeral HUD was faking.",
+        "mechanic": "Vertical alternating case-jacket layout: folder-tab top edge (CSS clip-path), mono case header row (CASE No. / OPENED 2025 / LEAD ANALYST), the existing PROJECT_HIGHLIGHTS expand panel relabeled EVIDENCE, plus a one-line VERDICT ('detection latency cut to real-time'). The stamp is a GSAP scroll-in beat: opacity 0 → 1 at scale 1.6 rotating to a slightly imperfect ±3° resting angle with a single overshoot and a subtle box-shadow thud; ember for CLOSED, teal pulse for ACTIVE. Plain DOM/CSS, vertical scroll, mobile-native by default.",
+        "where": "Work (Selected Work) section",
+        "replaces": "The pinned horizontal track with 01/06 counter + progress hairline HUD in Work.tsx",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "narrative",
+        "avg": 5.8,
+        "judgeNotes": [
+          "Case-jacket framing is fine but the slamming CLOSED stamp drifts toward detective-movie kitsch, and it adds theming rather than any new proof of competence.",
+          "Case-jacket skeuomorphism and a scroll-in stamp slam are both familiar tropes (detective-noir portfolios, stamp reveals everywhere) — pleasant and mobile-safe, but recognizably assembled from stock moves.",
+          "Plain vertical DOM with one well-tuned stamp tween is mobile-native by default, kills a cloned section, and the tactile beat is high payoff for genuinely modest effort."
+        ]
+      },
+      {
+        "name": "Commit heartbeat — the portfolio has a pulse",
+        "pitch": "The Stats band becomes an instrument panel with one live organ: an EKG-style sparkline of Ismail's actual GitHub push activity over the last 90 days, drawn like a monitor trace with 'last push: 14h ago · pls-dqn-miso' beneath it. Numbers on portfolios are always claims; a heartbeat pulled from the public API at page load is evidence, and the cardiac-monitor framing lands perfectly next to 'On shift'. It also quietly retires the count-up counters flagged as template furniture.",
+        "mechanic": "One unauthenticated fetch to api.github.com/users/MuhammadIsmail009/events/public, bucketed per day, cached in sessionStorage; a build-time snapshot JSON ships as fallback so rate limits or offline never show a blank (caption flips from 'live' to 'as of <build date>'). Rendered as a single SVG polyline with a GSAP stroke-dashoffset draw-on and a small ember blip pulsing at the newest point; the other three stat tiles stay static type (no data-counter). ~120 lines total, degrades to static SVG under reduced motion.",
+        "where": "Stats band (between Approach and Work)",
+        "replaces": "Count-up stat counters (data-counter) — plus it makes the fake Experience commit hashes look even sillier, supporting their cut",
+        "effort": "S",
+        "perf_risk": "low",
+        "angle": "data-alive",
+        "avg": 5.3,
+        "judgeNotes": [
+          "Live GitHub activity is evidence over claims, but it's a generic developer-portfolio move with no SOC specificity — and a sparse push history could backfire.",
+          "GitHub activity sparklines are among the most common live widgets on developer portfolios; the EKG framing is a thin coat of paint on a stock idea, however honest the data.",
+          "~120 lines, one fetch with a committed fallback so it can never render blank — low risk and honest, though the visual payoff is one small sparkline rather than a signature moment."
+        ]
+      },
+      {
+        "name": "You Are Being Triaged (live behavioral rules)",
+        "pitch": "The site runs a real four-rule behavioral detection engine on the visitor — rules with published thresholds like rapid_section_hopping or devtools_opened — and when you trip one, a small case card slides in, auto-enriches, and closes itself 'verdict: benign — curious visitor, likely recruiter'. Unlike a fingerprint dossier it inspects what you DO, not what your browser IS: it is literally detection engineering performed on the page, and the self-deprecating benign verdict keeps it charming rather than creepy.",
+        "mechanic": "An in-memory event bus (scroll velocity, section transitions, rapid clicks, copy events, devtools-resize heuristic) evaluated by 4 declarative rules defined openly in content.ts with name/threshold/window — the rule source itself is shown in the card, proving it's real logic. On first trigger only (per session, desktop only), a compact case card animates in bottom-right: rule name, matched events, one enrichment line, then a 2s auto-triage to CLOSED/benign with Ismail's analyst note. Dismissible, fires at most twice per visit, disabled under reduced motion; shares its tracker with the Shift Handoff footer.",
+        "where": "Global overlay layer (desktop-gated), one reserved trigger near Experience to show triage craft in context",
+        "replaces": "Dossier.tsx Passive-DNA fingerprint modal + its palette/terminal entry points (blatant copy)",
+        "effort": "L",
+        "perf_risk": "medium",
+        "angle": "soc-authentic",
+        "avg": 5.2,
+        "judgeNotes": [
+          "Real behavioral rules with published thresholds is genuine detection logic performed live, but desktop-only, L-effort, medium perf risk, and a whiff of gimmick keep it a notch below the artifact-based concepts.",
+          "Showing real rule source is a genuine touch, but devtools-detection and 'we noticed you' toast cards are established gimmicks with creepiness risk, and it overlaps detections.log while carrying L effort and medium perf risk.",
+          "Large effort for a desktop-only feature most visitors never trigger, built on flaky heuristics (devtools-resize detection breaks constantly) — the definition of high effort, low visible payoff, plus creepiness downside risk."
+        ]
+      },
+      {
+        "name": "Airlock Checkpoints",
+        "pitch": "The site becomes a secure facility you're being escorted through: every section boundary is a checkpoint — a hairline draws across the viewport as you cross it, prints 'CHECKPOINT 03 // WORK · ACCESS GRANTED · escort: ismail' in microtype, flashes teal for one beat, and the printed clearance level rises the deeper you go. One motion idea, repeated with discipline, replaces the seven stacked effects that currently read template-y — this is the 'two or three signature motions land harder' fix made literal.",
+        "mechanic": "A divider component between sections: an SVG line animated with GSAP drawSVG-style scaleX from center, mono label fading in split left/right of the line, single 120ms teal glow via CSS custom prop, then it settles to a permanent quiet hairline with the checkpoint text as a real section landmark (doubles as visual wayfinding, which lets the dot rail die). Triggered once per checkpoint via ScrollTrigger, no scrub, no rAF loop. Works identically on mobile since it is just a full-width divider. Effort is small enough to ship alongside any of the bigger concepts.",
+        "where": "Every section boundary, site-wide",
+        "replaces": "The effect-stack bloat (hover scramble, cursor label pill, spotlight/tilt pair, scanlines) as the site's single connective motion signature",
+        "effort": "S",
+        "perf_risk": "low",
+        "angle": "narrative",
+        "avg": 5.2,
+        "judgeNotes": [
+          "'ACCESS GRANTED' checkpoints are exactly the hacker-aesthetic cosplay a discerning security manager rolls eyes at — disciplined motion, zero competence signal.",
+          "'CHECKPOINT // ACCESS GRANTED' microtype is exactly the hacker-terminal flavor being purged, and an animated section divider is one of the most common scroll effects in existence — discipline applied to a cliché is still a cliché.",
+          "One small divider component reused everywhere replaces seven stacked effects, works identically on mobile, and is the best effort-to-cohesion ratio here — the only risk is it getting repetitive by checkpoint five."
+        ]
+      },
+      {
+        "name": "Constellation Handoff",
+        "pitch": "As you scroll out of the hero, the security-graph constellation doesn't fade — its nodes detach, streak along curved paths, and dock one-by-one into the left-rail section dots, which pulse alive as each node lands. The threat graph literally resolves into the site's index: a one-time, five-second transition that stitches two elements Ismail already owns (his 3D/SVG graph, his dot rail) into a moment nobody else has. It's the kind of seam-hiding choreography that makes a portfolio feel engineered rather than assembled.",
+        "mechanic": "On first hero exit (ScrollTrigger onLeave, once), spawn a fixed-position SVG overlay, clone the 8-9 brightest constellation nodes at their screen coordinates, tween them along gsap MotionPath curves to the measured rail-dot positions with 0.06s stagger; each arrival fires a scale-pop + ember→teal color settle on the real rail dot, then the overlay unmounts. Edges in the hero SVG fade via stroke-opacity as their nodes depart. Desktop-only (rail is desktop-only anyway); mobile and reduced-motion get the current simple fade. Zero cost after the one-time run.",
+        "where": "Hero exit → Chrome.tsx left dot rail",
+        "replaces": "The borrowed hero status-cluster furniture (coordinates corner, cue line) — hero earns a signature exit instead of decorated corners",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "motion-craft",
+        "avg": 4,
+        "judgeNotes": [
+          "Pure motion polish stitching two decorative elements together — impressive to designers, invisible to a security hiring decision.",
+          "Nodes streaking into nav dots is handsome seam-hiding choreography, but flying-particle transitions read as decoration, it's a five-second one-time flourish, and it doubles down on preserving the dot rail other concepts rightly kill.",
+          "Fragile cross-component coordinate measurement for a one-time five-second desktop-only moment that fast scrollers will miss entirely — real engineering cost for payoff most visitors never see."
+        ]
+      },
+      {
+        "name": "The Sign-off",
+        "pitch": "At the very end of the page, his email address writes itself once in a single hand-drawn ember stroke — a literal signature closing the shift — then crossfades into crisp selectable text with a small 'shift handover — reply anytime' mono caption. It replaces the copied 'secure channel' decrypt with something warmer and more confident: the one human flourish on a disciplined site, and a genuinely rare move (self-drawing signatures exist for names, almost never for a contact email as the contact CTA itself).",
+        "mechanic": "Pre-generate the email as SVG paths at build time (opentype.js against a single-stroke/handwriting font, committed as a static asset — zero runtime cost). On footer scroll-into-view (once), GSAP scrubs stroke-dashoffset per glyph sequentially over ~1.6s with a pen-speed ease, ember stroke with a soft teal glow settling in; then the SVG crossfades to a real mailto link (a11y: the link is present in DOM the whole time, aria-hidden swap on the drawing). Reduced motion: text link only.",
+        "where": "Footer / Contact",
+        "replaces": "Footer email-decrypt + 'secure channel established' status line (blatant)",
+        "effort": "M",
+        "perf_risk": "low",
+        "angle": "motion-craft",
+        "avg": 3.8,
+        "judgeNotes": [
+          "A self-drawing email signature is warm but says nothing about SOC work, and 'flourish' is the opposite of the analyst persona the rest of the site is building.",
+          "Self-drawing signature strokes are a well-established portfolio flourish, handwriting sits oddly against a disciplined SOC identity, and applying it to an email address is a twist on a trope rather than a new move.",
+          "The opentype.js build step sounds tidy but single-stroke handwriting fonts are a licensing-and-quality rabbit hole, the warm flourish is tonally off the SOC brand, and the payoff is one 1.6s moment."
+        ]
+      }
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Audit"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Ideate"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 3,
+      "title": "Judge"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "audit:derivative-scan",
+      "phaseIndex": 1,
+      "phaseTitle": "Audit",
+      "agentId": "a8d56885ce70179f7",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1783804150739,
+      "queuedAt": 1783804150696,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "READ-ONLY task — do not edit, write, or create any files; only read code and fetch web pages.\n\nRepo: F:\\Ismail-Portfolio — Muhammad Ismail's SOC/blue-team portfolio (Vite+React+TS+GSAP, ember-orange #F0853A + teal #5AC8BE palette on warm near-black).\n\nContext: Ismail's friend Abubakar has a portfolio at https://kryptbakar.github.io/AbubakarPortfolio-/ . Ismail's recent v3 work (commits af287f2..76…",
+      "lastProgressAt": 1783804675032,
+      "tokens": 129844,
+      "toolCalls": 40,
+      "durationMs": 524292,
+      "resultPreview": "{\"derivative\":[{\"feature\":\"\\\"Passive DNA\\\" browser-fingerprint dossier (src/components/Dossier.tsx)\",\"file\":\"src/components/Dossier.tsx\",\"why\":\"Near-verbatim clone of Abubakar's Recon Mirror (recon.js). Same modal concept and layout, kicker '// PASSIVE DNA' vs his '// PASSIVE RECON', identical safebar copy '0 bytes transmitted · gathered client-side in Xms · nothing left this page', same fingerpri…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "ideate:soc-authentic",
+      "phaseIndex": 2,
+      "phaseTitle": "Ideate",
+      "agentId": "ade619d9e28140947",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1783804676760,
+      "queuedAt": 1783804675068,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "READ-ONLY task — do not edit, write, or create any files.\n\nYou are a creative director designing ORIGINAL signature interactions for Muhammad Ismail's cybersecurity portfolio (F:\\Ismail-Portfolio — read src/lib/content.ts, src/App.tsx and skim section components to ground yourself; live palette: ember-orange #F0853A + teal #5AC8BE on warm near-black #0B0A09; identity: SOC analyst / detection engin…",
+      "lastProgressAt": 1783804799297,
+      "tokens": 49091,
+      "toolCalls": 5,
+      "durationMs": 122537,
+      "resultPreview": "{\"concepts\":[{\"name\":\"One Alert, Four Moves (Evidence Pane)\",\"pitch\":\"Instead of an abstract packet-on-a-wire animation, the Approach section dissects one real alert: a raw JSON log of encoded PowerShell spawning from a Word doc, transformed live through Model, Detect, Triage, Harden. Methodology stops being claimed and gets demonstrated on actual evidence — any security hiring manager recognizes …"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "ideate:narrative",
+      "phaseIndex": 2,
+      "phaseTitle": "Ideate",
+      "agentId": "a9590531ea90e71b7",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1783804676725,
+      "queuedAt": 1783804675068,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "READ-ONLY task — do not edit, write, or create any files.\n\nYou are a creative director designing ORIGINAL signature interactions for Muhammad Ismail's cybersecurity portfolio (F:\\Ismail-Portfolio — read src/lib/content.ts, src/App.tsx and skim section components to ground yourself; live palette: ember-orange #F0853A + teal #5AC8BE on warm near-black #0B0A09; identity: SOC analyst / detection engin…",
+      "lastProgressAt": 1783804816764,
+      "tokens": 49071,
+      "toolCalls": 5,
+      "durationMs": 140038,
+      "resultPreview": "{\"concepts\":[{\"name\":\"You Are the Alert\",\"pitch\":\"The visit itself becomes an incident: the moment you land, a quiet ticket opens on you — 'INC-2026-0712 · NEW · unknown entity on perimeter' — and scrolling the site IS the triage. The ticket advances through Ismail's own methodology stages (Modeled → Detected → Triaged → Hardened) as you pass each section, and at Contact it closes with 'DISPOSITIO…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "ideate:motion-craft",
+      "phaseIndex": 2,
+      "phaseTitle": "Ideate",
+      "agentId": "a88fe90b5a71d8f44",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1783804676746,
+      "queuedAt": 1783804675069,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "READ-ONLY task — do not edit, write, or create any files.\n\nYou are a creative director designing ORIGINAL signature interactions for Muhammad Ismail's cybersecurity portfolio (F:\\Ismail-Portfolio — read src/lib/content.ts, src/App.tsx and skim section components to ground yourself; live palette: ember-orange #F0853A + teal #5AC8BE on warm near-black #0B0A09; identity: SOC analyst / detection engin…",
+      "lastProgressAt": 1783804810962,
+      "tokens": 52588,
+      "toolCalls": 5,
+      "durationMs": 134216,
+      "resultPreview": "{\"concepts\":[{\"name\":\"Signal Trace\",\"pitch\":\"The Approach section's divider is a single continuous telemetry waveform that your scroll literally draws — noisy raw signal under 'Model', thresholded spikes under 'Detect', one flagged spike with an annotation tick under 'Triage', and a clean flat baseline under 'Harden'. It tells his exact professional story (telemetry into signal into answer) in one…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "ideate:data-alive",
+      "phaseIndex": 2,
+      "phaseTitle": "Ideate",
+      "agentId": "a0d2dd14ebf3d521a",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1783804676834,
+      "queuedAt": 1783804675069,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "READ-ONLY task — do not edit, write, or create any files.\n\nYou are a creative director designing ORIGINAL signature interactions for Muhammad Ismail's cybersecurity portfolio (F:\\Ismail-Portfolio — read src/lib/content.ts, src/App.tsx and skim section components to ground yourself; live palette: ember-orange #F0853A + teal #5AC8BE on warm near-black #0B0A09; identity: SOC analyst / detection engin…",
+      "lastProgressAt": 1783804814254,
+      "tokens": 52150,
+      "toolCalls": 5,
+      "durationMs": 137420,
+      "resultPreview": "{\"concepts\":[{\"name\":\"detections.log — you are the telemetry\",\"pitch\":\"The visitor's own behavior fires real Sigma-style detection rules Ismail wrote: rage-click, copy the email, scroll the whole page in under 8 seconds, go idle for 90s, open the site at 3am local — each raises a quiet, severity-tagged alert toast ('ISM-0042 · low · Rapid enumeration of /work'). Clicking any alert opens the actual…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 6,
+      "label": "judge:recruiter",
+      "phaseIndex": 3,
+      "phaseTitle": "Judge",
+      "agentId": "a952f3505364de6d2",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1783804823355,
+      "queuedAt": 1783804816768,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "READ-ONLY judging task — do not edit any files. You are a security hiring manager. Score each concept 0-10 on: does it make Ismail more hireable — signals real SOC/detection competence, memorable without being juvenile.\n\nConcepts (JSON): [{\"name\":\"One Alert, Four Moves (Evidence Pane)\",\"pitch\":\"Instead of an abstract packet-on-a-wire animation, the Approach section dissects one real alert: a raw J…",
+      "lastProgressAt": 1783804881691,
+      "tokens": 38317,
+      "toolCalls": 1,
+      "durationMs": 58335,
+      "resultPreview": "{\"scores\":[{\"name\":\"One Alert, Four Moves (Evidence Pane)\",\"score\":9,\"oneLiner\":\"Walking one recognizable artifact (encoded PS from a maldoc) through model/detect/triage/harden with ATT&CK, EPSS/KEV and a rule-tuning diff is methodology demonstrated on evidence — exactly what a SOC hiring manager screens for, and instantly interview-defensible.\"},{\"name\":\"Detected by Design (Sigma rule cards)\",\"sc…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 7,
+      "label": "judge:design",
+      "phaseIndex": 3,
+      "phaseTitle": "Judge",
+      "agentId": "a47280ed701c33672",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1783804818419,
+      "queuedAt": 1783804816768,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "READ-ONLY judging task — do not edit any files. You are an Awwwards judge. Score each concept 0-10 on originality and craft potential — is this a genuine signature move nobody else has, or dressed-up cliché? Punish anything resembling: fake OS, terminal gimmicks, matrix rain, particle fields, generic command palettes.\n\nConcepts (JSON): [{\"name\":\"One Alert, Four Moves (Evidence Pane)\",\"pitch\":\"Inst…",
+      "lastProgressAt": 1783804886702,
+      "tokens": 38357,
+      "toolCalls": 1,
+      "durationMs": 68283,
+      "resultPreview": "{\"scores\":[{\"name\":\"One Alert, Four Moves (Evidence Pane)\",\"score\":8.5,\"oneLiner\":\"A pinned evidence pane that triages one real encoded-PowerShell log through four states is demonstration instead of decoration — no other security portfolio dissects an actual artifact, and the sticky-split mechanic serves the content rather than performing.\"},{\"name\":\"Detected by Design (Sigma rule cards)\",\"score\":…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 8,
+      "label": "judge:engineering",
+      "phaseIndex": 3,
+      "phaseTitle": "Judge",
+      "agentId": "ab3bc5ab41a6bd10b",
+      "model": "claude-fable-5",
+      "state": "done",
+      "startedAt": 1783804818673,
+      "queuedAt": 1783804816768,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "READ-ONLY judging task — do not edit any files. You are a pragmatic frontend lead. Score each concept 0-10 on feasibility-to-payoff for a static Vite+React+GSAP site on GitHub Pages: perf risk, a11y risk, scope creep risk, mobile story. Punish high effort for low visible payoff.\n\nConcepts (JSON): [{\"name\":\"One Alert, Four Moves (Evidence Pane)\",\"pitch\":\"Instead of an abstract packet-on-a-wire anim…",
+      "lastProgressAt": 1783804877665,
+      "tokens": 38356,
+      "toolCalls": 1,
+      "durationMs": 58992,
+      "resultPreview": "{\"scores\":[{\"name\":\"One Alert, Four Moves (Evidence Pane)\",\"score\":9,\"oneLiner\":\"Pre-rendered spans plus one sticky ScrollTrigger is cheap, degrades cleanly to tabs on mobile, and the payoff (real artifact instead of decoration) is the highest credibility-per-line-of-code on the list.\"},{\"name\":\"Detected by Design (Sigma rule cards)\",\"score\":7.5,\"oneLiner\":\"Static YAML expand panels are trivially …"
+    }
+  ],
+  "totalTokens": 447774,
+  "totalToolCalls": 63
+}

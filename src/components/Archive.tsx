@@ -50,7 +50,6 @@ export function Archive() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`${cls} hover:bg-surface/40`}
-                  data-cursor-label="VIEW"
                 >
                   {inner}
                 </a>

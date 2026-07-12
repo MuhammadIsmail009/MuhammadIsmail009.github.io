@@ -18,17 +18,8 @@ export const SITE = {
   location: 'Pakistan',
   base: 'Lahore, PK',
   school: 'GIK Institute',
-  coords: ['31.5204° N', '74.3587° E'],
   timezone: 'Asia/Karachi',
   timezoneLabel: 'PKT',
-  /** Rotating hero focus ticker — the disciplines on shift. */
-  focus: [
-    'DETECTION ENGINEERING',
-    'THREAT INTELLIGENCE',
-    'INCIDENT RESPONSE',
-    'DEVSECOPS',
-    'ML-DRIVEN DEFENSE',
-  ],
 } as const
 
 export const CONTACT = {
@@ -73,11 +64,14 @@ export interface Project {
   tags: string[]
   link: string | null
   linkLabel: string
+  /** Queue severity — how the alert row is triaged in Selected Work. */
+  severity: 'crit' | 'high' | 'med' | 'info'
 }
 
 export const PROJECTS: Project[] = [
   {
     id: '01',
+    severity: 'crit',
     title: 'SOC Central',
     meta: 'Final-Year Project · Lead',
     description:
@@ -88,6 +82,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: '02',
+    severity: 'info',
     title: 'DQN-PLS-MISO',
     meta: 'Research · Solo',
     description:
@@ -98,6 +93,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: '03',
+    severity: 'high',
     title: 'Secure DevSecOps Pipeline',
     meta: 'Contributor',
     description:
@@ -108,6 +104,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: '04',
+    severity: 'high',
     title: 'AI-IDS',
     meta: 'Solo',
     description:
@@ -118,6 +115,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: '05',
+    severity: 'med',
     title: 'Sportify / TurfBook',
     meta: 'Co-founder',
     description:
@@ -128,6 +126,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: '06',
+    severity: 'med',
     title: 'Secure IoT / Zero-Trust Network',
     meta: 'Coursework',
     description:
@@ -177,14 +176,127 @@ export const PROJECT_HIGHLIGHTS: Record<string, string[]> = {
   ],
 }
 
+/**
+ * Detection rules — one honest Sigma rule per project, covering the threat
+ * class that project defends against. Written to be defensible in an
+ * interview; projects with no credible SIEM story (pure research) carry none.
+ */
+export const SIGMA_RULES: Record<string, string> = {
+  '01': `title: Office Application Spawning Encoded PowerShell
+id: ism-0001
+status: stable
+description: Word/Excel launching PowerShell with an encoded command —
+  classic maldoc foothold. SOC Central ships this class of rule over
+  eBPF/Osquery process telemetry.
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '\\\\WINWORD.EXE'
+      - '\\\\EXCEL.EXE'
+  selection_child:
+    Image|endswith: '\\\\powershell.exe'
+    CommandLine|contains:
+      - '-enc'
+      - '-EncodedCommand'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Signed enterprise macros that shell out (allowlist by hash)
+level: high
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.initial-access
+  - attack.t1566.001`,
+  '03': `title: Secret Material Committed to Repository
+id: ism-0003
+status: stable
+description: Credential patterns landing in a commit — the class of leak
+  the pipeline's Gitleaks gate exists to block before merge.
+logsource:
+  category: application
+  product: ci
+detection:
+  selection:
+    event: 'push'
+    diff|re:
+      - 'AKIA[0-9A-Z]{16}'
+      - '-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----'
+      - '(?i)(api[_-]?key|secret)\\\\s*[:=]\\\\s*[A-Za-z0-9+/]{20,}'
+  condition: selection
+falsepositives:
+  - Test fixtures with documented dummy keys
+level: high
+tags:
+  - attack.credential-access
+  - attack.t1552.001`,
+  '04': `title: Port Scan Burst from Single Internal Host
+id: ism-0004
+status: experimental
+description: One host fanning out across many ports/hosts in a short
+  window — the recon behaviour AI-IDS scores alongside its LOF
+  anomaly channel.
+logsource:
+  category: network_connection
+detection:
+  selection:
+    initiated: true
+  timeframe: 60s
+  condition: selection | count(dst_port) by src_ip > 40
+falsepositives:
+  - Vulnerability scanners on an approved schedule
+level: medium
+tags:
+  - attack.discovery
+  - attack.t1046`,
+  '05': `title: Password Spray Against Login Endpoint
+id: ism-0005
+status: stable
+description: Many failed logins across distinct accounts from one
+  source — the auth abuse an OIDC/RBAC design has to expect.
+logsource:
+  category: webserver
+detection:
+  selection:
+    cs-method: 'POST'
+    cs-uri-stem: '/api/login'
+    sc-status: 401
+  timeframe: 5m
+  condition: selection | count(cs-username) by c-ip > 15
+falsepositives:
+  - Shared NAT egress during a forced password reset
+level: medium
+tags:
+  - attack.credential-access
+  - attack.t1110.003`,
+  '06': `title: IoT Segment Host Reaching Corporate VLAN
+id: ism-0006
+status: stable
+description: Any allowed flow from the IoT segment into the corporate
+  VLAN violates the zero-trust segmentation policy by definition.
+logsource:
+  category: firewall
+detection:
+  selection:
+    src_ip|cidr: '10.30.0.0/16'   # IoT segment
+    dst_ip|cidr: '10.10.0.0/16'   # corporate VLAN
+    action: 'allow'
+  condition: selection
+falsepositives:
+  - None — the policy says this flow must not exist
+level: high
+tags:
+  - attack.lateral-movement
+  - attack.t1021`,
+}
+
 export interface ExperienceItem {
   role: string
   org: string
   period: string
   summary: string
-  upcoming?: boolean
-  /** Stable fake commit hash for the git-log presentation. */
-  hash: string
   location: string
 }
 
@@ -195,16 +307,14 @@ export const EXPERIENCE: ExperienceItem[] = [
     period: 'Jun 2026 — present',
     summary:
       'On the live SOC floor at a specialist security firm — alert triage, detection tuning, and investigations across client environments.',
-    hash: 'e8b19f4',
     location: 'Lahore',
   },
   {
     role: 'Threat Intelligence & Incident Management Intern',
-    org: 'NCERT Pakistan · National CERT',
-    period: '2026 — present',
+    org: 'NCERT Pakistan',
+    period: 'Jun 2026 — present',
     summary:
       'National-CERT duty, remote — collecting and triaging cyber threat intelligence and supporting incident management on cases that matter at national scale.',
-    hash: 'c4e7b21',
     location: 'Remote',
   },
   {
@@ -213,7 +323,6 @@ export const EXPERIENCE: ExperienceItem[] = [
     period: 'Summer 2025',
     summary:
       'Detection engineering and SOC operations — triage, tuning, and turning raw telemetry into signal. The anchor of my blue-team experience.',
-    hash: 'a3c47d2',
     location: 'Lahore',
   },
 ]
@@ -390,13 +499,13 @@ export const ABOUT = {
   interests: ['Formula 1', 'Anime', 'Tennis — GIK team Vice-Captain'],
 } as const
 
-/** Identity card facts — the quick-scan sidebar in About. */
+/** Quick-scan facts card in About — styled as a shell readout. */
 export const IDENTITY = [
-  { k: 'Degree', v: 'BS Cybersecurity · GIK, 2023 — 2027' },
-  { k: 'Based in', v: 'Lahore, Pakistan' },
-  { k: 'Focus', v: 'SOC · Detection Engineering · DevSecOps' },
-  { k: 'Leadership', v: 'Sponsorship Head, GIK Science Society · Tennis Vice-Captain' },
-  { k: 'Status', v: 'SOC @ Ebryx · Threat intel @ NCERT PK' },
+  { k: 'education', v: 'BS Cybersecurity · GIK, 2023 — 2027' },
+  { k: 'operating_from', v: 'Lahore, Pakistan' },
+  { k: 'focus', v: 'SOC · Detection Engineering · DevSecOps' },
+  { k: 'also', v: 'Sponsorship Head, GIK Science Society · Tennis Vice-Captain' },
+  { k: 'currently', v: 'SOC @ Ebryx · Threat intel @ NCERT PK' },
 ] as const
 
 /* ------------------------------------------------------------------ */
@@ -421,43 +530,6 @@ export const SECTION_INDEX: IndexedSection[] = [
 ]
 
 /* ------------------------------------------------------------------ */
-/* ISMAIL SOC — the boot-into-a-SOC-workstation mode                    */
-/* ------------------------------------------------------------------ */
-
-export const SOC = {
-  toggleLabel: 'ISMAIL SOC',
-  hint: 'psst — this site boots into a SOC. hit the switch',
-  osName: 'ISMAIL SOC 26.07 LTS',
-  bootLines: [
-    '[  OK  ] Reached target Detection Pipeline',
-    '[  OK  ] Started eBPF Telemetry Collector',
-    '[  OK  ] Loaded 412 YARA rules — 0 errors',
-    '[  OK  ] Mounted /var/log/soc (append-only)',
-    '[  OK  ] Enriching feeds — EPSS · CISA KEV · MITRE ATT&CK',
-    '[  OK  ] Started kryptctl interactive shell',
-    '[  OK  ] Analyst on shift: ismail',
-  ],
-  readme: [
-    'MUHAMMAD ISMAIL — cybersecurity engineer.',
-    'SOC & detection engineering · GIK Institute, class of 2027.',
-    '',
-    "Attacker's mindset. Defender's discipline.",
-    '',
-    'Ebryx SOC · NCERT threat intel · building SOC Central (FYP).',
-    'This desktop is a toy — the work is real. Open work/ for proof.',
-  ],
-  defense: {
-    core: 'SOC-CENTRAL',
-    nodes: ['WEB', 'API', 'DB', 'IOT', 'VPN', 'MAIL'],
-    feedBoot: [
-      '[ OK ] SOC-CENTRAL core online — 6 segments monitored',
-      'SYS  detection pipeline armed · YARA + ML scoring live',
-      'HINT click a hostile to block it before it reaches a segment',
-    ],
-  },
-} as const
-
-/* ------------------------------------------------------------------ */
 /* Terminal easter egg — the ONLY place personality/humor lives.       */
 /* ------------------------------------------------------------------ */
 
@@ -469,7 +541,7 @@ export interface TerminalCommand {
 export const TERMINAL_PROMPT = 'ismail@soc:~$'
 
 export const TERMINAL_INTRO: string[] = [
-  'kryptctl 1.0.0 — interactive shell',
+  'blueshift 1.0.0 — interactive shell',
   "Type 'help' for commands. Try: whoami · stack · f1",
 ]
 
@@ -487,18 +559,8 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
       '  f1          off the record',
       '  anime       off the record',
       '  tennis      off the record',
-      '  soc         boot the SOC workstation',
-      '  dossier     what your browser just told me',
       '  clear       clear the screen',
     ],
-  },
-  soc: {
-    desc: 'boot the SOC workstation',
-    out: ['Booting ISMAIL SOC…'],
-  },
-  dossier: {
-    desc: 'passive intel — what your browser leaks',
-    out: ['Assembling passive-DNA dossier… 0 bytes transmitted.'],
   },
   whoami: {
     desc: 'who is this',

@@ -37,18 +37,16 @@ export function About() {
           <dl
             className="relative mt-10 overflow-hidden rounded-xl border border-hairline bg-surface/40"
             data-reveal
-            data-tilt
-            data-spotlight
           >
             <div className="border-b border-hairline px-5 py-3 font-mono text-xs text-faint">
-              <span className="text-accent">//</span> IDENTITY
+              <span className="text-accent">$</span> whoami --long
             </div>
             {IDENTITY.map((row) => (
               <div
                 key={row.k}
                 className="grid grid-cols-[7.5rem_1fr] gap-4 border-b border-hairline px-5 py-3 last:border-b-0 sm:grid-cols-[9rem_1fr]"
               >
-                <dt className="font-mono text-xs uppercase tracking-[0.15em] text-faint">
+                <dt className="font-mono text-xs tracking-[0.08em] text-faint">
                   {row.k}
                 </dt>
                 <dd className="font-mono text-xs leading-relaxed text-muted">{row.v}</dd>

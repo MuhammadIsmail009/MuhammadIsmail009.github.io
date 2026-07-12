@@ -147,67 +147,6 @@
   }
 }
 
-/* Cursor-tracking spotlight glow — host sets --mx/--my (see lib/cardfx.ts). */
-[data-spotlight]::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.45s ease;
-  background: radial-gradient(
-    340px circle at var(--mx, 50%) var(--my, 50%),
-    rgb(240 133 58 / 0.08),
-    transparent 65%
-  );
-}
-[data-spotlight]:hover::after {
-  opacity: 1;
-}
-
-/* Dossier rows assemble in one by one. */
-@keyframes dossier-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.dossier-row {
-  opacity: 0;
-  animation: dossier-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Experience git-log branch line — faint rail + accent line drawn by scroll. */
-.exp-log::before,
-.exp-log::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-}
-.exp-log::before {
-  background: rgb(var(--hairline) / 0.08);
-}
-.exp-log::after {
-  background: linear-gradient(to bottom, rgb(240 133 58 / 0.7), rgb(240 133 58 / 0.15));
-  transform: scaleY(var(--draw, 0));
-  transform-origin: top;
-}
-
-/* Approach step lit by the pipeline event dwelling at its gate. */
-[data-approach-step].is-active > span:first-child {
-  color: rgb(240 133 58 / 0.3);
-}
-[data-approach-step].is-active > span:last-child {
-  transform: scaleX(1);
-}
-
 /* Nav condenses once scrolled past the hero (toggled by MotionLayer). */
 [data-nav] > nav {
   transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
@@ -226,17 +165,36 @@
   width: 100%;
 }
 
-/* Work card hover-lift. The reveal clears its inline transform on complete, so
-   this translate is free to apply (and is a no-op under reduced motion). */
-[data-work-card] {
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease,
-    box-shadow 0.45s ease;
+/* Triage queue — a case row's body unfolds from the queue line when the row
+   is "worked" (scrolled to). grid-template-rows keeps it height-auto safe. */
+.case-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s ease 0.1s;
 }
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  [data-work-card]:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 24px 60px -28px rgba(240, 133, 58, 0.35);
+.case-row.is-worked .case-body {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-body {
+    grid-template-rows: 1fr;
+    opacity: 1;
   }
+}
+
+/* Handover feed — the acknowledgment line prints in like the rest of the note. */
+@keyframes feed-in {
+  from {
+    transform: translateY(120%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.feed-ack {
+  animation: feed-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Hero scroll cue — gentle travel down the line; neutralised under reduced motion. */

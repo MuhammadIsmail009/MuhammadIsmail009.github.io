@@ -1,10 +1,9 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SmoothScroll } from '@/components/SmoothScroll'
 import { Grain } from '@/components/Grain'
 import { Cursor } from '@/components/Cursor'
 import { Chrome } from '@/components/Chrome'
-import { CommandPalette, SOC_BOOT_EVENT } from '@/components/CommandPalette'
-import { Dossier } from '@/components/Dossier'
+import { CommandPalette } from '@/components/CommandPalette'
 import { Preloader } from '@/components/Preloader'
 import { MotionLayer } from '@/components/MotionLayer'
 import { Nav } from '@/components/Nav'
@@ -22,23 +21,11 @@ import { Footer } from '@/components/Footer'
 import { MotionReadyContext } from '@/lib/motionReady'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 
-// SOC mode pulls in the workstation + defense-game code — keep it out of the
-// initial bundle and load it only when the analyst boots.
-const SocMode = lazy(() => import('@/components/soc/SocMode'))
-
 export default function App() {
   const reduced = useReducedMotion()
   // Reduced motion skips the preloader entirely: content is ready immediately.
   const [ready, setReady] = useState(reduced)
   const [showPreloader, setShowPreloader] = useState(!reduced)
-  const [soc, setSoc] = useState(false)
-
-  // Nav, terminal, and the command palette all boot the SOC via this event.
-  useEffect(() => {
-    const boot = () => setSoc(true)
-    window.addEventListener(SOC_BOOT_EVENT, boot)
-    return () => window.removeEventListener(SOC_BOOT_EVENT, boot)
-  }, [])
 
   return (
     <MotionReadyContext.Provider value={ready}>
@@ -58,7 +45,6 @@ export default function App() {
         <Grain />
         <Chrome />
         <CommandPalette />
-        <Dossier />
         <Nav />
         <main id="main">
           <Hero />
@@ -76,12 +62,6 @@ export default function App() {
       </SmoothScroll>
 
       <MotionLayer ready={ready} />
-
-      {soc ? (
-        <Suspense fallback={null}>
-          <SocMode onExit={() => setSoc(false)} />
-        </Suspense>
-      ) : null}
     </MotionReadyContext.Provider>
   )
 }

@@ -1,184 +1,239 @@
-import { useRef } from 'react'
-import { PROJECTS, type Project } from '@/lib/content'
+import { useRef, useState } from 'react'
+import { PROJECTS, PROJECT_HIGHLIGHTS, SIGMA_RULES, type Project } from '@/lib/content'
 import { SectionHeader, Tag } from '@/components/ui'
-import { gsap, useGSAP } from '@/lib/gsap'
+import { ScrollTrigger, useGSAP } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { useMotionReady } from '@/lib/motionReady'
 
-// Align the full-bleed track's first card with the centered container's left edge.
-const TRACK_PADDING = {
-  paddingLeft: 'max(clamp(1.25rem, 5vw, 4rem), calc((100vw - 80rem) / 2))',
-  paddingRight: 'clamp(1.25rem, 5vw, 4rem)',
-} as const
+const SEVERITY: Record<Project['severity'], { label: string; dot: string; text: string }> = {
+  crit: { label: 'crit', dot: 'bg-accent-deep', text: 'text-accent' },
+  high: { label: 'high', dot: 'bg-accent', text: 'text-accent' },
+  med: { label: 'med', dot: 'bg-faint', text: 'text-muted' },
+  info: { label: 'info', dot: 'bg-data/70', text: 'text-data' },
+}
 
-function WorkCard({ project }: { project: Project }) {
+/** Minimal YAML tinting — keys teal, comments faint, everything else muted. */
+function RuleLine({ line }: { line: string }) {
+  const hash = line.indexOf('#')
+  if (hash === 0 || (hash > 0 && line.slice(0, hash).trim() === '')) {
+    return <span className="text-faint">{line}</span>
+  }
+  const m = /^(\s*(?:- )?)([\w|.-]+)(:)(.*)$/.exec(line)
+  if (!m) return <span className="text-muted">{line}</span>
   return (
-    <article
-      data-work-card
-      role="listitem"
-      className="group relative flex w-[82vw] max-w-[28rem] shrink-0 snap-start flex-col justify-between rounded-2xl border border-hairline bg-surface/40 p-7 hover:border-accent/40 sm:w-[60vw] md:w-[44vw] lg:w-[28rem]"
+    <span>
+      <span className="text-muted">{m[1]}</span>
+      <span className="text-data">{m[2]}</span>
+      <span className="text-faint">{m[3]}</span>
+      <span className="text-muted">{m[4]}</span>
+    </span>
+  )
+}
+
+function CaseCard({
+  project,
+  worked,
+  innerRef,
+}: {
+  project: Project
+  worked: boolean
+  innerRef: (el: HTMLLIElement | null) => void
+}) {
+  const [ruleOpen, setRuleOpen] = useState(false)
+  const rule = SIGMA_RULES[project.id]
+  const sev = SEVERITY[project.severity]
+  const highlights = PROJECT_HIGHLIGHTS[project.id] ?? []
+  const panelId = `rule-${project.id}`
+
+  return (
+    <li
+      ref={innerRef}
+      className={`case-row border-b border-hairline ${worked ? 'is-worked' : ''}`}
     >
-      <div>
-        <div className="flex items-start justify-between gap-4">
-          <span className="font-display text-7xl font-semibold leading-none text-faint/40 transition-colors duration-500 group-hover:text-accent/40">
-            {project.id}
-          </span>
-          <span className="kicker mt-2 text-right">{project.meta}</span>
-        </div>
-
-        <h3 className="mt-7 font-display text-3xl font-semibold tracking-tight text-fg transition-colors duration-300 group-hover:text-accent">
+      {/* queue line — always visible */}
+      <div className="flex items-center gap-4 py-5 font-mono text-xs">
+        <span className="text-faint">ALR-{project.id}</span>
+        <span className="flex items-center gap-1.5">
+          <span
+            className={`h-1.5 w-1.5 rounded-full transition-colors duration-700 ${
+              worked ? 'bg-data' : sev.dot
+            }`}
+            aria-hidden
+          />
+          <span className={worked ? 'text-data' : sev.text}>{sev.label}</span>
+        </span>
+        <span
+          className={`truncate font-display text-base font-semibold tracking-tight transition-colors duration-500 sm:text-lg ${
+            worked ? 'text-fg' : 'text-muted'
+          }`}
+        >
           {project.title}
-        </h3>
-        <p className="mt-4 text-pretty text-sm leading-relaxed text-muted">{project.description}</p>
+        </span>
+        <span className="ml-auto hidden shrink-0 text-faint sm:block">{project.meta}</span>
+        <span
+          className={`shrink-0 transition-colors duration-700 ${
+            worked ? 'text-data' : 'text-faint'
+          }`}
+        >
+          {worked ? '● triaged' : '○ queued'}
+        </span>
       </div>
 
-      <div className="mt-8">
-        <div className="flex flex-wrap gap-2">
-          {project.tags.map((t) => (
-            <Tag key={t}>{t}</Tag>
-          ))}
+      {/* case file — expands when the analyst (your scroll) reaches it */}
+      <div className="case-body" aria-hidden={!worked}>
+        <div className="min-h-0 overflow-hidden">
+          <div className="grid gap-8 pb-8 pl-0 sm:pl-[4.5rem] lg:grid-cols-[1fr_minmax(0,22rem)]">
+            <div>
+              <p className="max-w-prose2 text-pretty text-sm leading-relaxed text-muted sm:text-base">
+                {project.description}
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {project.tags.map((t) => (
+                  <Tag key={t}>{t}</Tag>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap items-center gap-5">
+                {project.link ? (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    tabIndex={worked ? 0 : -1}
+                    className="inline-flex items-center gap-2 font-mono text-xs text-fg transition-colors hover:text-accent"
+                  >
+                    {project.linkLabel} <span aria-hidden>↗</span>
+                  </a>
+                ) : (
+                  <span className="inline-flex items-center gap-2 font-mono text-xs text-faint">
+                    <span className="h-1.5 w-1.5 rounded-full bg-faint" aria-hidden />
+                    {project.linkLabel}
+                  </span>
+                )}
+                {rule ? (
+                  <button
+                    type="button"
+                    tabIndex={worked ? 0 : -1}
+                    onClick={() => setRuleOpen((o) => !o)}
+                    aria-expanded={ruleOpen}
+                    aria-controls={panelId}
+                    className="inline-flex items-center gap-2 font-mono text-xs text-muted transition-colors hover:text-accent"
+                  >
+                    <span className="text-accent" aria-hidden>
+                      {ruleOpen ? '▾' : '▸'}
+                    </span>
+                    view detection rule
+                  </button>
+                ) : null}
+              </div>
+
+              {rule ? (
+                <div
+                  id={panelId}
+                  className={`grid transition-[grid-template-rows] duration-500 ease-expo ${
+                    ruleOpen ? 'mt-5 grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                  }`}
+                >
+                  <div className="min-h-0 overflow-hidden">
+                    <pre className="overflow-x-auto rounded-lg border border-hairline bg-[#0c0b0a] p-4 font-mono text-[0.7rem] leading-relaxed">
+                      {rule.split('\n').map((line, i) => (
+                        <div key={i}>
+                          <RuleLine line={line} />
+                        </div>
+                      ))}
+                    </pre>
+                    <p className="mt-2 font-mono text-[0.62rem] text-faint">
+                      sigma · written by me · would deploy as-is
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="lg:border-l lg:border-hairline lg:pl-8">
+              <p className="kicker mb-3">evidence</p>
+              <ul className="space-y-2">
+                {highlights.map((h) => (
+                  <li key={h} className="flex gap-2.5 font-mono text-xs leading-relaxed text-muted">
+                    <span className="mt-0.5 shrink-0 text-accent" aria-hidden>
+                      ▸
+                    </span>
+                    {h}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
-        {project.link ? (
-          <a
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-fg transition-colors hover:text-accent"
-            data-cursor-label="OPEN"
-          >
-            {project.linkLabel}
-            <span aria-hidden>↗</span>
-          </a>
-        ) : (
-          <span className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-faint">
-            <span className="h-1.5 w-1.5 rounded-full bg-faint" aria-hidden />
-            {project.linkLabel}
-          </span>
-        )}
       </div>
-    </article>
+    </li>
   )
 }
 
 /**
- * Selected work. Desktop (md+): the track pins fullscreen and scroll drives it
- * horizontally — cards drift in with depth, a counter + progress HUD track the
- * ride. Mobile / reduced motion: the native snap scroller stays.
+ * Selected Work as a triage queue: projects load as dim alert rows, and
+ * scrolling works the queue — each row expands into its case file and flips
+ * to "triaged". Reduced motion / no-JS-motion: everything ships expanded.
  */
 export function Work() {
   const reduced = useReducedMotion()
   const ready = useMotionReady()
-  const pin = useRef<HTMLDivElement>(null)
-  const track = useRef<HTMLDivElement>(null)
-  const counter = useRef<HTMLSpanElement>(null)
-  const progress = useRef<HTMLDivElement>(null)
-  const total = PROJECTS.length
+  const rows = useRef<(HTMLLIElement | null)[]>([])
+  const animate = !reduced
+  const [worked, setWorked] = useState<boolean[]>(() => PROJECTS.map(() => !animate))
 
   useGSAP(
     () => {
-      if (reduced || !ready) return
-      const pinEl = pin.current
-      const trackEl = track.current
-      if (!pinEl || !trackEl) return
-
-      const mm = gsap.matchMedia()
-      mm.add('(min-width: 768px)', () => {
-        const dist = () => Math.max(0, trackEl.scrollWidth - window.innerWidth)
-
-        const tween = gsap.to(trackEl, {
-          x: () => -dist(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: pinEl,
-            start: 'top top',
-            end: () => '+=' + dist(),
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              if (progress.current)
-                progress.current.style.transform = `scaleX(${self.progress})`
-              if (counter.current) {
-                const i = Math.min(total, Math.round(self.progress * (total - 1)) + 1)
-                counter.current.textContent = String(i).padStart(2, '0')
-              }
-            },
-          },
-        })
-
-        // Depth: each card rises in as it enters from the right, scrubbed by
-        // the horizontal ride itself.
-        gsap.utils.toArray<HTMLElement>('[data-work-card]', trackEl).forEach((card) => {
-          gsap.from(card, {
-            y: 60,
-            opacity: 0.15,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: card,
-              containerAnimation: tween,
-              start: 'left 95%',
-              end: 'left 55%',
-              scrub: true,
-            },
-          })
+      if (!animate || !ready) return
+      rows.current.forEach((el, i) => {
+        if (!el) return
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 72%',
+          once: true,
+          onEnter: () =>
+            setWorked((w) => {
+              if (w[i]) return w
+              const next = [...w]
+              next[i] = true
+              return next
+            }),
         })
       })
-      return () => mm.revert()
     },
-    { dependencies: [ready, reduced] },
+    { dependencies: [ready, animate] },
   )
 
+  const openCount = worked.filter((x) => !x).length
+
   return (
-    <section id="work" className="py-section" data-work>
-      <div ref={pin} className="md:flex md:h-screen md:flex-col md:justify-center md:overflow-hidden">
-        <div className="px-gutter">
-          <div className="mx-auto max-w-content">
-            <SectionHeader
-              index="/ 03"
-              label="Selected Work"
-              title="Systems that watch the systems."
-              description="Detection platforms, security research, and full-stack builds. Scroll the track — or jump to the repos."
-            />
-            {/* HUD — position + progress, desktop ride only */}
-            <div className="mt-8 hidden items-center gap-5 md:flex" aria-hidden>
-              <span className="font-mono text-xs tabular-nums text-faint">
-                <span ref={counter} className="text-accent">
-                  01
-                </span>{' '}
-                / {String(total).padStart(2, '0')}
-              </span>
-              <span className="relative block h-px w-40 overflow-hidden bg-hairline">
-                <span
-                  ref={progress}
-                  className="absolute inset-0 origin-left bg-accent"
-                  style={{ transform: 'scaleX(0)' }}
-                />
-              </span>
-            </div>
-          </div>
+    <section id="work" className="px-gutter py-section">
+      <div className="mx-auto max-w-content">
+        <SectionHeader
+          index="/ 03"
+          label="Selected Work"
+          title="Systems that watch the systems."
+          description="Six cases on the board. Scroll works the queue — each alert opens into the project behind it, detection rule included."
+        />
+
+        <div className="mt-8 flex items-center gap-3 font-mono text-xs text-faint" aria-hidden>
+          <span className={openCount ? 'text-accent' : 'text-data'}>
+            {openCount ? `queue: ${String(openCount).padStart(2, '0')} open` : 'queue clear'}
+          </span>
+          <span className="h-px flex-1 bg-hairline" />
         </div>
 
-        <div className="relative">
-          <div
-            ref={track}
-            data-work-track
-            role="list"
-            aria-label="Selected work"
-            tabIndex={0}
-            className="mt-14 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-10 md:snap-none md:overflow-visible md:pb-0"
-            style={TRACK_PADDING}
-          >
-            {PROJECTS.map((p) => (
-              <WorkCard key={p.id} project={p} />
-            ))}
-          </div>
-          {/* affordance: hint that the track continues (mobile scroller only) */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-canvas to-transparent md:hidden"
-          />
-        </div>
+        <ol className="mt-4 border-t border-hairline">
+          {PROJECTS.map((p, i) => (
+            <CaseCard
+              key={p.id}
+              project={p}
+              worked={worked[i]}
+              innerRef={(el) => {
+                rows.current[i] = el
+              }}
+            />
+          ))}
+        </ol>
       </div>
     </section>
   )
