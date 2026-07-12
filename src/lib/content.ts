@@ -418,6 +418,56 @@ export const ARCHIVE: ArchiveItem[] = [
   },
 ]
 
+/** Instruments — concrete tools, rendered as logo tiles in Stack. `icon` is a
+ *  simple-icons export name; tiles without one get a mono monogram. */
+export interface Tool {
+  name: string
+  icon?: string
+  /** monogram fallback when no logo exists */
+  mono?: string
+}
+
+export const TOOLS: Tool[] = [
+  { name: 'Splunk', icon: 'siSplunk' },
+  { name: 'Elastic / ELK', icon: 'siElastic' },
+  { name: 'YARA', mono: 'YR' },
+  { name: 'Wireshark', icon: 'siWireshark' },
+  { name: 'Burp Suite', icon: 'siBurpsuite' },
+  { name: 'Nmap', mono: 'NM' },
+  { name: 'Osquery', mono: 'OSQ' },
+  { name: 'eBPF', mono: 'BPF' },
+  { name: 'Python', icon: 'siPython' },
+  { name: 'C / C++', icon: 'siCplusplus' },
+  { name: 'TypeScript', icon: 'siTypescript' },
+  { name: 'Bash', icon: 'siGnubash' },
+  { name: 'TensorFlow', icon: 'siTensorflow' },
+  { name: 'XGBoost', mono: 'XGB' },
+  { name: 'Kali Linux', icon: 'siKalilinux' },
+  { name: 'Linux', icon: 'siLinux' },
+  { name: 'Docker', icon: 'siDocker' },
+  { name: 'K3s', icon: 'siK3s' },
+  { name: 'GitHub Actions', icon: 'siGithubactions' },
+  { name: 'React', icon: 'siReact' },
+  { name: 'Node / Express', icon: 'siNodedotjs' },
+  { name: 'PostgreSQL', icon: 'siPostgresql' },
+]
+
+/** Tradecraft — disciplines and frameworks; knowledge, not products. */
+export const TRADECRAFT: string[] = [
+  'SOC Operations',
+  'Detection Engineering',
+  'Threat Intelligence',
+  'DFIR',
+  'MITRE ATT&CK',
+  'EPSS',
+  'CISA KEV',
+  'Anomaly Detection',
+  'ISO 27001',
+  'NIST CSF',
+  'Zero Trust',
+  'DevSecOps',
+]
+
 export interface StackGroup {
   label: string
   items: string[]
