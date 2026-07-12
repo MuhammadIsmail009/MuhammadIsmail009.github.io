@@ -6,7 +6,7 @@ import { useReducedMotion } from '@/lib/useReducedMotion'
 import { useMotionReady } from '@/lib/motionReady'
 
 const SEVERITY: Record<Project['severity'], { label: string; dot: string; text: string }> = {
-  crit: { label: 'crit', dot: 'bg-accent-deep', text: 'text-accent' },
+  crit: { label: 'crit', dot: 'bg-threat', text: 'text-threat' },
   high: { label: 'high', dot: 'bg-accent', text: 'text-accent' },
   med: { label: 'med', dot: 'bg-faint', text: 'text-muted' },
   info: { label: 'info', dot: 'bg-data/70', text: 'text-data' },

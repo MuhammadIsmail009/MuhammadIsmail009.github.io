@@ -100,7 +100,7 @@ function EvidencePane({ step }: { step: number }) {
               finance workstation
             </p>
             <p className="mt-1">
-              <span className="rounded-full border border-accent/50 bg-accent/10 px-2 py-0.5 text-[0.6rem] text-accent">
+              <span className="rounded-full border border-threat/50 bg-threat/10 px-2 py-0.5 text-[0.6rem] text-threat">
                 verdict: HIGH — escalate, contain host
               </span>
             </p>

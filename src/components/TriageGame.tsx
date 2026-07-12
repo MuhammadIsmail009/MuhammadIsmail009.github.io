@@ -234,12 +234,12 @@ export function TriageGame() {
               <span>
                 alert {String(round + 1).padStart(2, '0')}/{ROUNDS} · {sig.src}
               </span>
-              <span className={left <= 2 ? 'text-accent' : ''}>{left}s</span>
+              <span className={left <= 2 ? 'text-threat' : ''}>{left}s</span>
             </div>
             {/* SLA bar */}
             <div className="mt-2 h-px w-full overflow-hidden bg-hairline" aria-hidden>
               <div
-                className="h-full bg-accent"
+                className={left <= 2 ? 'h-full bg-threat' : 'h-full bg-accent'}
                 style={{
                   width: `${(left / SECS) * 100}%`,
                   transition: reduced ? 'none' : 'width 1s linear',
@@ -271,7 +271,7 @@ export function TriageGame() {
             <p
               aria-live="polite"
               className={`mt-4 min-h-[2.4rem] font-mono text-[0.7rem] leading-relaxed ${
-                feedback ? (feedback.good ? 'text-data' : 'text-accent') : 'text-faint'
+                feedback ? (feedback.good ? 'text-data' : 'text-threat') : 'text-faint'
               }`}
             >
               {feedback ? feedback.text : 'Real telemetry shapes. Call it before the SLA bar dies.'}
@@ -287,9 +287,9 @@ export function TriageGame() {
             <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-1.5 font-mono text-xs text-muted sm:grid-cols-3">
               <span>caught: <span className="text-data">{tally.tp}</span></span>
               <span>clean dismissals: <span className="text-data">{tally.tn}</span></span>
-              <span>false positives: <span className="text-accent">{tally.fp}</span></span>
-              <span>missed threats: <span className="text-accent">{tally.fn}</span></span>
-              <span>SLA breaches: <span className="text-accent">{tally.slow}</span></span>
+              <span>false positives: <span className="text-threat">{tally.fp}</span></span>
+              <span>missed threats: <span className="text-threat">{tally.fn}</span></span>
+              <span>SLA breaches: <span className="text-threat">{tally.slow}</span></span>
               <span>precision: <span className="text-fg">{precision}%</span></span>
             </div>
             <div className="mt-6 flex gap-3">

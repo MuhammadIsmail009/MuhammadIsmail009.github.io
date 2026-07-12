@@ -41,7 +41,8 @@
     --accent-soft: 232 114 44; /* #E8722C */
     --accent-bright: 255 161 79; /* #FFA14F highlight */
     --accent-deep: 214 98 28; /* #D6621C */
-    --data: 90 200 190; /* #5AC8BE cool screen / data accent */
+    --data: 90 200 190; /* #5AC8BE cool "resolved/benign" accent */
+    --threat: 229 72 77; /* #E5484D hostile / sev-crit ONLY */
     --hairline: 255 247 236; /* warm hairline */
 
     /* composed tokens */

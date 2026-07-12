@@ -172,7 +172,11 @@ export function Hero() {
         </h1>
 
         <p className="mt-8 max-w-prose2 font-display text-2xl font-medium leading-[1.12] tracking-tight sm:text-3xl">
-          <span data-tag-red className="text-accent text-glow">
+          <span
+            data-tag-red
+            className="text-threat"
+            style={{ textShadow: '0 0 22px rgb(229 72 77 / 0.45), 0 0 60px rgb(229 72 77 / 0.2)' }}
+          >
             {SITE.taglineRed}
           </span>{' '}
           <span data-tag-blue className="text-data" style={{ textShadow: '0 0 22px rgb(90 200 190 / 0.4)' }}>

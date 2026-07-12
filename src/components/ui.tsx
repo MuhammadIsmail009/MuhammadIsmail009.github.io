@@ -87,7 +87,7 @@ export function ButtonLink({
     'group relative inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm tracking-wide transition-colors duration-300'
   const styles =
     variant === 'primary'
-      ? 'bg-accent text-canvas hover:bg-accent-soft'
+      ? 'bg-accent text-canvas shadow-[0_0_24px_-6px_rgba(240,133,58,0.55)] transition-shadow hover:bg-accent-soft hover:shadow-[0_0_34px_-4px_rgba(240,133,58,0.65)]'
       : 'border border-hairline text-fg hover:border-accent/50 hover:text-accent'
 
   // The trailing arrow slides right on hover; a download glyph reads better

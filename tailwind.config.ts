@@ -25,6 +25,7 @@ export default {
           deep: v('--accent-deep'),
         },
         data: v('--data'),
+        threat: v('--threat'),
         hairline: 'rgb(var(--hairline) / 0.08)',
       },
       fontFamily: {
