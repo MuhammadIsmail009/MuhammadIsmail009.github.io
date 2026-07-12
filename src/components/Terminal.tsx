@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Section, SectionHeader } from '@/components/ui'
 import { TERMINAL_COMMANDS, TERMINAL_INTRO, TERMINAL_PROMPT } from '@/lib/content'
 
+const GAME_EVENT = 'triage:open'
+
 interface Line {
   kind: 'in' | 'out'
   text: string
@@ -17,7 +19,10 @@ export function TerminalShell({ heightClass = 'h-[clamp(280px,40vh,420px)]' }: {
   const [pastIdx, setPastIdx] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
+  const launchT = useRef<number>()
   const inputId = 'term-input'
+
+  useEffect(() => () => window.clearTimeout(launchT.current), [])
 
   useEffect(() => {
     const el = bodyRef.current
@@ -44,6 +49,15 @@ export function TerminalShell({ heightClass = 'h-[clamp(280px,40vh,420px)]' }: {
       else next.push({ kind: 'out', text: `command not found: ${cmd} — try 'help'` })
     }
     setHistory((h) => [...h, ...next])
+
+    // `triage` deals a shift once the output has a beat to land.
+    if (cmd === 'triage') {
+      window.clearTimeout(launchT.current)
+      launchT.current = window.setTimeout(
+        () => window.dispatchEvent(new CustomEvent(GAME_EVENT)),
+        450,
+      )
+    }
   }
 
   const onSubmit = (e: FormEvent) => {
@@ -115,7 +129,7 @@ export function Terminal() {
         index="/ 07"
         label="Easter egg"
         title="A shell, for the curious."
-        description="Where the personality lives. Type help — then try whoami, stack, or f1."
+        description="Where the personality lives. Type help — then try whoami, stack, or triage (bring reflexes)."
         className="mb-12"
       />
 

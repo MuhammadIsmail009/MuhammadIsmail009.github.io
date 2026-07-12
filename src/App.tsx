@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { SmoothScroll } from '@/components/SmoothScroll'
 import { Grain } from '@/components/Grain'
 import { Cursor } from '@/components/Cursor'
@@ -21,11 +21,26 @@ import { Footer } from '@/components/Footer'
 import { MotionReadyContext } from '@/lib/motionReady'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 
+// The mini game stays out of the initial bundle; it loads on first play.
+const TriageGame = lazy(() =>
+  import('@/components/TriageGame').then((m) => ({ default: m.TriageGame })),
+)
+const GAME_EVENT = 'triage:open'
+
 export default function App() {
   const reduced = useReducedMotion()
   // Reduced motion skips the preloader entirely: content is ready immediately.
   const [ready, setReady] = useState(reduced)
   const [showPreloader, setShowPreloader] = useState(!reduced)
+  const [game, setGame] = useState(false)
+
+  // First `triage` command mounts the game chunk; after that the component
+  // handles its own open/close on the same event.
+  useEffect(() => {
+    const boot = () => setGame(true)
+    window.addEventListener(GAME_EVENT, boot)
+    return () => window.removeEventListener(GAME_EVENT, boot)
+  }, [])
 
   return (
     <MotionReadyContext.Provider value={ready}>
@@ -62,6 +77,12 @@ export default function App() {
       </SmoothScroll>
 
       <MotionLayer ready={ready} />
+
+      {game ? (
+        <Suspense fallback={null}>
+          <TriageGame />
+        </Suspense>
+      ) : null}
     </MotionReadyContext.Provider>
   )
 }

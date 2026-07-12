@@ -542,7 +542,7 @@ export const TERMINAL_PROMPT = 'ismail@soc:~$'
 
 export const TERMINAL_INTRO: string[] = [
   'blueshift 1.0.0 — interactive shell',
-  "Type 'help' for commands. Try: whoami · stack · f1",
+  "Type 'help' for commands. Try: whoami · stack · triage",
 ]
 
 export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
@@ -559,8 +559,13 @@ export const TERMINAL_COMMANDS: Record<string, TerminalCommand> = {
       '  f1          off the record',
       '  anime       off the record',
       '  tennis      off the record',
+      '  triage      work a shift — the mini game',
       '  clear       clear the screen',
     ],
+  },
+  triage: {
+    desc: 'work a shift — the mini game',
+    out: ['Dealing the queue… 12 alerts, 7 seconds each. E to escalate, D to dismiss.'],
   },
   whoami: {
     desc: 'who is this',

@@ -90,6 +90,13 @@ export function CommandPalette() {
         run: () => window.open(CONTACT.linkedin, '_blank', 'noopener'),
       },
       {
+        id: 'triage',
+        label: 'Triage Rush — work a shift',
+        hint: 'mini game',
+        kw: 'game play fun soc alerts shift',
+        run: () => window.dispatchEvent(new CustomEvent('triage:open')),
+      },
+      {
         id: 'page',
         label: 'Page the on-call analyst',
         hint: 'opens mail',
