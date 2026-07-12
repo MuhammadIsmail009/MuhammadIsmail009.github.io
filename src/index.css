@@ -177,11 +177,27 @@
   display: grid;
   grid-template-rows: 0fr;
   opacity: 0;
-  transition: grid-template-rows 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s ease 0.12s;
+  transition: grid-template-rows 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease 0.05s;
 }
 .case-row.is-worked .case-body {
   grid-template-rows: 1fr;
   opacity: 1;
+}
+/* the card itself lands with a rise + settle */
+/* `backwards` (not `both`) so the finished animation releases transform/opacity
+   back to the hover-lift transition and GSAP parallax. */
+.case-row.is-worked .case-card {
+  animation: case-unfold 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@keyframes case-unfold {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 /* case-file contents rise in one by one once the row is worked (pure CSS —
    survives React remounts/HMR where a JS tween would not) */
@@ -189,12 +205,13 @@
   opacity: 0;
 }
 .case-row.is-worked [data-case-item] {
-  animation: case-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  animation: case-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 @keyframes case-rise {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(22px);
   }
   to {
     opacity: 1;

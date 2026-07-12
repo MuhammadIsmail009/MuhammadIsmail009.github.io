@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { PROJECTS, PROJECT_HIGHLIGHTS, SIGMA_RULES, type Project } from '@/lib/content'
 import { SectionHeader, Tag } from '@/components/ui'
-import { ScrollTrigger, useGSAP } from '@/lib/gsap'
+import { ScrollTrigger, gsap, useGSAP } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { useMotionReady } from '@/lib/motionReady'
 
@@ -89,8 +89,9 @@ function CaseCard({
       <div className="case-body" aria-hidden={!open}>
         <div className="min-h-0 overflow-hidden">
           <div className="case-card group relative mb-10 overflow-hidden rounded-2xl border border-hairline bg-surface/40 p-7 sm:p-9">
-            {/* ghost case number */}
+            {/* ghost case number — drifts against the scroll */}
             <span
+              data-case-ghost
               className="pointer-events-none absolute -right-3 -top-7 select-none font-display text-[7.5rem] font-semibold leading-none text-fg/[0.045] transition-colors duration-700 group-hover:text-accent/10 sm:text-[10rem]"
               aria-hidden
             >
@@ -99,24 +100,24 @@ function CaseCard({
 
             <div className="relative grid gap-9 lg:grid-cols-[1fr_minmax(0,21rem)]">
               <div>
-                <p className="kicker" data-case-item style={{ animationDelay: '80ms' }}>
+                <p className="kicker" data-case-item style={{ animationDelay: '40ms' }}>
                   case ALR-{project.id} · {project.meta}
                 </p>
                 <h3
                   className="mt-3 font-display text-3xl font-semibold tracking-tight text-fg transition-colors duration-300 group-hover:text-accent sm:text-4xl"
                   data-case-item
-                  style={{ animationDelay: '150ms' }}
+                  style={{ animationDelay: '90ms' }}
                 >
                   {project.title}
                 </h3>
                 <p
                   className="mt-4 max-w-prose2 text-pretty text-sm leading-relaxed text-muted sm:text-base"
                   data-case-item
-                  style={{ animationDelay: '220ms' }}
+                  style={{ animationDelay: '140ms' }}
                 >
                   {project.description}
                 </p>
-                <div className="mt-6 flex flex-wrap gap-2" data-case-item style={{ animationDelay: '290ms' }}>
+                <div className="mt-6 flex flex-wrap gap-2" data-case-item style={{ animationDelay: '190ms' }}>
                   {project.tags.map((t) => (
                     <Tag key={t}>{t}</Tag>
                   ))}
@@ -124,7 +125,7 @@ function CaseCard({
                 <div
                   className="mt-7 flex flex-wrap items-center gap-6"
                   data-case-item
-                  style={{ animationDelay: '360ms' }}
+                  style={{ animationDelay: '240ms' }}
                 >
                   {project.link ? (
                     <a
@@ -185,7 +186,8 @@ function CaseCard({
               <div
                 className="lg:border-l lg:border-hairline lg:pl-8"
                 data-case-item
-                style={{ animationDelay: '430ms' }}
+                data-case-parallax
+                style={{ animationDelay: '260ms' }}
               >
                 <p className="kicker mb-4">evidence</p>
                 <ul className="space-y-2.5">
@@ -254,9 +256,9 @@ export function Work() {
           window.setTimeout(() => {
             busy.current = false
             pump()
-          }, 260),
+          }, 70),
         )
-      }, 460),
+      }, 230),
     )
   }
 
@@ -267,17 +269,68 @@ export function Work() {
         if (!el) return
         ScrollTrigger.create({
           trigger: el,
-          start: 'top 82%',
+          start: 'top 85%',
           once: true,
           onEnter: () => {
             eligible.current[i] = true
             pump()
           },
         })
+
+        // Scroll-scrubbed drift: the evidence column and ghost numeral move
+        // against the scroll while a card is on screen — the section stays
+        // kinetic after the unfold. Column drift is desktop-only: when the
+        // grid stacks, translating the evidence block overlaps the links.
+        const lg = window.matchMedia('(min-width: 1024px)').matches
+        const drift = el.querySelector('[data-case-parallax]')
+        if (drift && lg) {
+          gsap.fromTo(
+            drift,
+            { y: 36 },
+            {
+              y: -36,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+                invalidateOnRefresh: true,
+              },
+            },
+          )
+        }
+        const ghost = el.querySelector('[data-case-ghost]')
+        if (ghost) {
+          gsap.fromTo(
+            ghost,
+            { yPercent: 26 },
+            {
+              yPercent: -18,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+                invalidateOnRefresh: true,
+              },
+            },
+          )
+        }
       })
     },
     { dependencies: [ready, animate] },
   )
+
+  // Card expansions change the page's geometry — re-measure every trigger on
+  // the page once the queue is fully worked.
+  const allDone = phases.every((p) => p === 'triaged')
+  useEffect(() => {
+    if (!allDone || !animate) return
+    const id = window.setTimeout(() => ScrollTrigger.refresh(), 1100)
+    return () => window.clearTimeout(id)
+  }, [allDone, animate])
 
   useEffect(() => {
     const t = timers.current
