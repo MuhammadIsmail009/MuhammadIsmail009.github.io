@@ -225,13 +225,40 @@ export function Work() {
     PROJECTS.map(() => (animate ? 'queued' : 'triaged')),
   )
 
-  const setPhase = (i: number, p: Phase) =>
+  // The queue is worked like a real one: scroll makes rows eligible, but an
+  // "analyst" processes them strictly one at a time, in order — so the
+  // working→triaged beat is visible even if all rows enter view at once.
+  const phasesRef = useRef(phases)
+  phasesRef.current = phases
+  const eligible = useRef<boolean[]>(PROJECTS.map(() => false))
+  const busy = useRef(false)
+
+  const pump = () => {
+    if (busy.current) return
+    const i = phasesRef.current.findIndex((p, idx) => p === 'queued' && eligible.current[idx])
+    if (i < 0) return
+    busy.current = true
     setPhases((prev) => {
-      if (prev[i] === p || prev[i] === 'triaged') return prev
       const next = [...prev]
-      next[i] = p
+      next[i] = 'working'
       return next
     })
+    timers.current.push(
+      window.setTimeout(() => {
+        setPhases((prev) => {
+          const next = [...prev]
+          next[i] = 'triaged'
+          return next
+        })
+        timers.current.push(
+          window.setTimeout(() => {
+            busy.current = false
+            pump()
+          }, 260),
+        )
+      }, 460),
+    )
+  }
 
   useGSAP(
     () => {
@@ -240,21 +267,11 @@ export function Work() {
         if (!el) return
         ScrollTrigger.create({
           trigger: el,
-          start: 'top 68%',
+          start: 'top 82%',
           once: true,
           onEnter: () => {
-            setPhase(i, 'working')
-            timers.current.push(
-              window.setTimeout(
-                () =>
-                  setPhases((prev) => {
-                    const next = [...prev]
-                    next[i] = 'triaged'
-                    return next
-                  }),
-                520,
-              ),
-            )
+            eligible.current[i] = true
+            pump()
           },
         })
       })
