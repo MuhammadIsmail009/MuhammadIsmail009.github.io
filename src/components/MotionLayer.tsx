@@ -74,6 +74,9 @@ export function MotionLayer({ ready }: { ready: boolean }) {
 
       buildNavState()
 
+      // The single accent hue, read from the token so it follows the palette.
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+
       ScrollTrigger.batch('[data-reveal]:not([data-split])', {
         start: 'top 88%',
         onEnter: (els) =>
@@ -100,8 +103,12 @@ export function MotionLayer({ ready }: { ready: boolean }) {
             linesClass: 'split-line',
             onSplit(self) {
               gsap.set(el, { opacity: 1 })
+              // Each heading rises from behind its mask AND flashes slate → white,
+              // so scrolling a section into view "highlights" it in the one accent.
               return gsap.from(self.lines, {
                 yPercent: 115,
+                color: `rgb(${accent})`,
+                clearProps: 'color',
                 duration: 1.1,
                 ease: EASE.expo,
                 stagger: 0.12,

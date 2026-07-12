@@ -78,7 +78,7 @@ export function Chrome() {
               <span
                 className={`block h-1.5 w-1.5 rounded-full ring-1 transition-all duration-300 ${
                   on
-                    ? 'scale-125 bg-accent ring-accent/60 shadow-[0_0_10px_rgba(240,133,58,0.7)]'
+                    ? 'scale-125 bg-accent ring-accent/60 shadow-[0_0_10px_rgba(142,158,196,0.7)]'
                     : 'bg-transparent ring-faint/50 group-hover:ring-accent/70'
                 }`}
               />

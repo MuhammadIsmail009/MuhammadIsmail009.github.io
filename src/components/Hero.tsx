@@ -40,7 +40,7 @@ function HeroBackdrop() {
         fill="none"
         style={{ maskImage: mask, WebkitMaskImage: mask }}
       >
-        <g stroke="rgb(240 133 58 / 0.16)" strokeWidth={1}>
+        <g stroke="rgb(142 158 196 / 0.16)" strokeWidth={1}>
           {EDGES.map(([a, b], i) => (
             <line key={i} x1={NODES[a][0]} y1={NODES[a][1]} x2={NODES[b][0]} y2={NODES[b][1]} />
           ))}
@@ -51,7 +51,7 @@ function HeroBackdrop() {
             cx={x}
             cy={y}
             r={ACTIVE.has(i) ? 4.5 : 2.5}
-            fill={ACTIVE.has(i) ? 'rgb(240 133 58 / 0.95)' : 'rgb(242 240 236 / 0.4)'}
+            fill={ACTIVE.has(i) ? 'rgb(142 158 196 / 0.9)' : 'rgb(244 245 247 / 0.4)'}
           />
         ))}
       </svg>
@@ -128,6 +128,15 @@ export function Hero() {
           '<',
         )
         .to(q('[data-hero-fade]'), { opacity: 1, y: 0, duration: 0.9, stagger: 0.12 }, '-=0.5')
+
+      // Scroll choreography — the hero recedes with depth instead of a flat fade:
+      // the graph pulls back + dims, the copy lifts, and the type sits black-and-white
+      // at rest then eases into slate. The one colour only shows through motion.
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+      const scrub = () => ({ trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.6 })
+      gsap.to(q('[data-hero-word], [data-hero-tint]'), { color: `rgb(${accent})`, ease: 'none', scrollTrigger: scrub() })
+      gsap.to(q('[data-hero-copy]'), { yPercent: -8, ease: 'none', scrollTrigger: scrub() })
+      gsap.to(q('[data-hero-scene]'), { yPercent: 14, scale: 1.08, opacity: 0.32, ease: 'none', scrollTrigger: scrub() })
     },
     { scope: root, dependencies: [ready, reduced] },
   )
@@ -152,7 +161,7 @@ export function Hero() {
         )}
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-content">
+      <div data-hero-copy className="relative z-10 mx-auto w-full max-w-content">
         <p className="kicker mb-7 flex items-center gap-3">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
           <span data-hero-kicker>{SITE.kicker}</span>
@@ -165,21 +174,17 @@ export function Hero() {
             </span>
           </span>
           <span className="block overflow-hidden">
-            <span data-hero-word className="glitch-soft block text-accent text-glow">
+            <span data-hero-word className="block text-fg">
               Ismail
             </span>
           </span>
         </h1>
 
-        <p className="mt-8 max-w-prose2 font-display text-2xl font-medium leading-[1.12] tracking-tight sm:text-3xl">
-          <span
-            data-tag-red
-            className="text-threat"
-            style={{ textShadow: '0 0 22px rgb(229 72 77 / 0.45), 0 0 60px rgb(229 72 77 / 0.2)' }}
-          >
+        <p className="mt-8 max-w-prose2 font-display text-2xl font-medium leading-[1.12] tracking-tight text-fg sm:text-3xl">
+          <span data-tag-red data-hero-tint>
             {SITE.taglineRed}
           </span>{' '}
-          <span data-tag-blue className="text-data" style={{ textShadow: '0 0 22px rgb(90 200 190 / 0.4)' }}>
+          <span data-tag-blue data-hero-tint className="text-muted">
             {SITE.taglineBlue}
           </span>
         </p>

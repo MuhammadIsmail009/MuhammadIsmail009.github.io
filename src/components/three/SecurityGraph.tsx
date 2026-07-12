@@ -2,8 +2,9 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-const ACCENT = new THREE.Color('#F0853A')
-const DIM = new THREE.Color('#6E6E74')
+const ACCENT = new THREE.Color('#8E9EC4')
+const BRIGHT = new THREE.Color('#C7D2EC')
+const DIM = new THREE.Color('#6A6C78')
 
 /** Deterministic-enough random graph: a cloud of nodes wired to nearest neighbours. */
 function buildGraph(n: number) {
@@ -38,6 +39,13 @@ export function SecurityGraph() {
   const nodes = useRef<THREE.InstancedMesh>(null!)
   const packets = useRef<THREE.InstancedMesh>(null!)
   const dummy = useMemo(() => new THREE.Object3D(), [])
+  const tint = useMemo(() => new THREE.Color(), [])
+
+  // Cursor projected onto the graph plane — nodes near it swell + brighten, so the
+  // constellation feels alive under the pointer instead of just drifting.
+  const raycaster = useMemo(() => new THREE.Raycaster(), [])
+  const plane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), [])
+  const cursor = useMemo(() => new THREE.Vector3(999, 999, 0), [])
 
   const { pts, edges, active } = useMemo(() => buildGraph(24), [])
 
@@ -89,6 +97,7 @@ export function SecurityGraph() {
   useFrame((state, dt) => {
     if (document.hidden) return
     const g = group.current
+    const t = state.clock.elapsedTime
 
     // Slow drift + pointer parallax.
     g.rotation.y += dt * 0.05
@@ -98,6 +107,32 @@ export function SecurityGraph() {
     g.rotation.z += (-px * 0.3 - g.rotation.z) * 0.04
     g.position.x += (px * 0.4 - g.position.x) * 0.04
     g.position.y += (py * 0.4 - g.position.y) * 0.04
+
+    // Project the cursor onto the graph plane, then into the group's local space so
+    // proximity holds up as the whole constellation drifts + rotates.
+    raycaster.setFromCamera(state.pointer, state.camera)
+    if (raycaster.ray.intersectPlane(plane, cursor)) {
+      g.worldToLocal(cursor)
+    }
+
+    // Nodes: idle pulse for "active" ones, plus a swell + brighten near the cursor.
+    for (let i = 0; i < pts.length; i++) {
+      const p = pts[i]
+      const isActive = active.has(i)
+      const near = 1 - Math.min(Math.hypot(p.x - cursor.x, p.y - cursor.y) / 1.5, 1)
+      const glow = near * near // ease-in falloff — tight bright core
+      const pulse = isActive ? 0.5 + 0.5 * Math.sin(t * 2 + i) : 0
+      const base = isActive ? 0.055 : 0.04
+      const s = base * (1 + pulse * 0.35) + glow * 0.06
+      dummy.position.copy(p)
+      dummy.scale.setScalar(s)
+      dummy.updateMatrix()
+      nodes.current.setMatrixAt(i, dummy.matrix)
+      tint.copy(isActive ? ACCENT : DIM).lerp(BRIGHT, glow)
+      nodes.current.setColorAt(i, tint)
+    }
+    nodes.current.instanceMatrix.needsUpdate = true
+    if (nodes.current.instanceColor) nodes.current.instanceColor.needsUpdate = true
 
     // March packets along their edges.
     travellers.forEach((tr, i) => {

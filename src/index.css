@@ -30,23 +30,24 @@
 @layer base {
   :root {
     /* color channels (space-separated RGB) — see tailwind.config.ts */
-    /* Refined Ember: warm near-black ramp, ember accent + cool "screen" data hue */
-    --bg: 11 10 9; /* #0B0A09 warm near-black */
-    --bg-elevated: 23 20 16; /* #171410 */
-    --bg-elevated-2: 33 28 22; /* #211C16 */
-    --fg: 243 240 234; /* #F3F0EA warm white */
-    --muted: 154 147 138; /* #9A938A — ~6:1 on canvas (AA) */
-    --faint: 132 124 113; /* #847C71 — ~4.8:1 on canvas (AA) */
-    --accent: 240 133 58; /* #F0853A ember */
-    --accent-soft: 232 114 44; /* #E8722C */
-    --accent-bright: 255 161 79; /* #FFA14F highlight */
-    --accent-deep: 214 98 28; /* #D6621C */
-    --data: 90 200 190; /* #5AC8BE cool "resolved/benign" accent */
-    --threat: 229 72 77; /* #E5484D hostile / sev-crit ONLY */
-    --hairline: 255 247 236; /* warm hairline */
+    /* Monochrome + Slate: neutral near-black → cool-white ramp. The ONE color is a
+       muted slate-blue (defender's hue) that type eases into on scroll. No orange/red. */
+    --bg: 11 11 12; /* #0B0B0C neutral near-black */
+    --bg-elevated: 23 23 27; /* #17171B */
+    --bg-elevated-2: 33 33 39; /* #212127 */
+    --fg: 244 245 247; /* #F4F5F7 cool white */
+    --muted: 154 156 166; /* #9A9CA6 — ~7:1 on canvas (AA) */
+    --faint: 128 130 140; /* #80828C — ~4.7:1 on canvas (AA) */
+    --accent: 142 158 196; /* #8E9EC4 muted slate-blue — the single complementary hue */
+    --accent-soft: 122 138 178; /* #7A8AB2 */
+    --accent-bright: 178 192 222; /* #B2C0DE highlight / accent text */
+    --accent-deep: 92 108 148; /* #5C6C94 */
+    --data: 143 166 155; /* #8FA69B calm sage — resolved / benign */
+    --threat: 185 138 138; /* #B98A8A dusty rose — critical (muted, not alarm-red) */
+    --hairline: 245 246 248; /* cool hairline */
 
     /* composed tokens */
-    --accent-glow: rgba(240, 133, 58, 0.2);
+    --accent-glow: rgba(142, 158, 196, 0.20);
 
     color-scheme: dark;
   }
@@ -144,7 +145,7 @@
 
   /* ember-glow text accent helper */
   .text-glow {
-    text-shadow: 0 0 22px rgba(255, 161, 79, 0.42), 0 0 60px rgba(240, 133, 58, 0.22);
+    text-shadow: 0 0 22px rgba(178, 192, 222, 0.40), 0 0 60px rgba(142, 158, 196, 0.20);
   }
 }
 
@@ -173,7 +174,7 @@
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   [data-work-card]:hover {
-    box-shadow: 0 24px 60px -28px rgba(240, 133, 58, 0.35);
+    box-shadow: 0 24px 60px -28px rgba(142, 158, 196, 0.30);
   }
 }
 
@@ -263,7 +264,7 @@
   100% {
     transform: translate(0, 0);
     clip-path: none;
-    text-shadow: 0 0 22px rgba(255, 161, 79, 0.42), 0 0 60px rgba(240, 133, 58, 0.22);
+    text-shadow: 0 0 22px rgba(178, 192, 222, 0.40), 0 0 60px rgba(142, 158, 196, 0.20);
   }
   81% {
     transform: translate(-4px, 2px);
@@ -300,7 +301,7 @@
   0%,
   82%,
   100% {
-    text-shadow: 0 0 22px rgba(255, 161, 79, 0.42), 0 0 60px rgba(240, 133, 58, 0.22);
+    text-shadow: 0 0 22px rgba(178, 192, 222, 0.40), 0 0 60px rgba(142, 158, 196, 0.20);
     opacity: 1;
   }
   83% {

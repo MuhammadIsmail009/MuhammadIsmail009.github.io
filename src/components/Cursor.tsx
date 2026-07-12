@@ -43,7 +43,7 @@ export function Cursor() {
 
       gsap.to(ringEl, {
         scale: interactive ? 1.8 : 1,
-        borderColor: interactive ? 'rgb(240 133 58 / 0.9)' : 'rgb(240 133 58 / 0.35)',
+        borderColor: interactive ? 'rgb(142 158 196 / 0.9)' : 'rgb(142 158 196 / 0.35)',
         duration: 0.3,
         overwrite: 'auto',
       })
