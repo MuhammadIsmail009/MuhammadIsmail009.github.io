@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { PROJECTS, PROJECT_HIGHLIGHTS, SIGMA_RULES, type Project } from '@/lib/content'
 import { SectionHeader, Tag } from '@/components/ui'
-import { ScrollTrigger, gsap, useGSAP } from '@/lib/gsap'
+import { gsap, useGSAP } from '@/lib/gsap'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 import { useMotionReady } from '@/lib/motionReady'
-
-type Phase = 'queued' | 'working' | 'triaged'
 
 const SEVERITY: Record<Project['severity'], { label: string; dot: string; text: string }> = {
   crit: { label: 'crit', dot: 'bg-accent-deep', text: 'text-accent' },
@@ -13,6 +11,12 @@ const SEVERITY: Record<Project['severity'], { label: string; dot: string; text: 
   med: { label: 'med', dot: 'bg-faint', text: 'text-muted' },
   info: { label: 'info', dot: 'bg-data/70', text: 'text-data' },
 }
+
+// Align the full-bleed track's first card with the centered container's left edge.
+const TRACK_PADDING = {
+  paddingLeft: 'max(clamp(1.25rem, 5vw, 4rem), calc((100vw - 80rem) / 2))',
+  paddingRight: 'clamp(1.25rem, 5vw, 4rem)',
+} as const
 
 /** Minimal YAML tinting — keys teal, comments faint, everything else muted. */
 function RuleLine({ line }: { line: string }) {
@@ -32,342 +36,246 @@ function RuleLine({ line }: { line: string }) {
   )
 }
 
-function StatusChip({ phase }: { phase: Phase }) {
-  if (phase === 'triaged')
-    return <span className="shrink-0 font-mono text-xs text-data">● triaged</span>
-  if (phase === 'working')
-    return (
-      <span className="shrink-0 animate-pulse-soft font-mono text-xs text-accent">
-        ◌ working…
-      </span>
-    )
-  return <span className="shrink-0 font-mono text-xs text-faint">○ queued</span>
-}
-
-function CaseCard({
-  project,
-  phase,
-  innerRef,
-}: {
-  project: Project
-  phase: Phase
-  innerRef: (el: HTMLLIElement | null) => void
-}) {
+function CaseCard({ project, worked }: { project: Project; worked: boolean }) {
   const [ruleOpen, setRuleOpen] = useState(false)
   const rule = SIGMA_RULES[project.id]
   const sev = SEVERITY[project.severity]
   const highlights = PROJECT_HIGHLIGHTS[project.id] ?? []
   const panelId = `rule-${project.id}`
-  const open = phase === 'triaged'
 
   return (
-    <li ref={innerRef} className={`case-row ${open ? 'is-worked' : ''}`}>
-      {/* queue line */}
-      <div className="flex items-center gap-4 py-4 font-mono text-xs">
-        <span className="text-faint">ALR-{project.id}</span>
+    <article
+      data-work-card
+      role="listitem"
+      className="group relative flex w-[84vw] max-w-[30rem] shrink-0 snap-start flex-col rounded-2xl border border-hairline bg-surface/40 p-7 transition-colors duration-500 hover:border-accent/40 sm:w-[62vw] md:w-[46vw] lg:w-[30rem]"
+    >
+      {/* case header — the alert line this card resolves */}
+      <div className="flex items-center justify-between gap-3 font-mono text-xs">
+        <span className="text-faint">CASE ALR-{project.id}</span>
         <span className="flex items-center gap-1.5">
           <span
             className={`h-1.5 w-1.5 rounded-full transition-colors duration-700 ${
-              open ? 'bg-data' : sev.dot
-            } ${phase === 'working' ? 'animate-ping' : ''}`}
+              worked ? 'bg-data' : sev.dot
+            }`}
             aria-hidden
           />
-          <span className={open ? 'text-data' : sev.text}>{sev.label}</span>
+          <span className={`transition-colors duration-700 ${worked ? 'text-data' : sev.text}`}>
+            {worked ? 'triaged' : sev.label}
+          </span>
         </span>
-        <span
-          className={`truncate font-display text-base font-semibold tracking-tight transition-colors duration-500 sm:text-lg ${
-            open ? 'text-fg' : 'text-muted'
-          }`}
-        >
-          {project.title}
-        </span>
-        <span className="ml-auto hidden shrink-0 text-faint sm:block">{project.meta}</span>
-        <StatusChip phase={phase} />
       </div>
 
-      {/* the case file */}
-      <div className="case-body" aria-hidden={!open}>
-        <div className="min-h-0 overflow-hidden">
-          <div className="case-card group relative mb-10 overflow-hidden rounded-2xl border border-hairline bg-surface/40 p-7 sm:p-9">
-            {/* ghost case number — drifts against the scroll */}
-            <span
-              data-case-ghost
-              className="pointer-events-none absolute -right-3 -top-7 select-none font-display text-[7.5rem] font-semibold leading-none text-fg/[0.045] transition-colors duration-700 group-hover:text-accent/10 sm:text-[10rem]"
-              aria-hidden
-            >
-              {project.id}
+      <h3 className="mt-6 font-display text-3xl font-semibold tracking-tight text-fg transition-colors duration-300 group-hover:text-accent">
+        {project.title}
+      </h3>
+      <p className="mt-1.5 font-mono text-xs text-faint">{project.meta}</p>
+      <p className="mt-4 text-pretty text-sm leading-relaxed text-muted">{project.description}</p>
+
+      <ul className="mt-5 space-y-1.5">
+        {highlights.slice(0, 3).map((h) => (
+          <li key={h} className="flex gap-2.5 font-mono text-[0.7rem] leading-relaxed text-muted">
+            <span className="mt-0.5 shrink-0 text-accent" aria-hidden>
+              ▸
             </span>
+            {h}
+          </li>
+        ))}
+      </ul>
 
-            <div className="relative grid gap-9 lg:grid-cols-[1fr_minmax(0,21rem)]">
-              <div>
-                <p className="kicker" data-case-item style={{ animationDelay: '40ms' }}>
-                  case ALR-{project.id} · {project.meta}
-                </p>
-                <h3
-                  className="mt-3 font-display text-3xl font-semibold tracking-tight text-fg transition-colors duration-300 group-hover:text-accent sm:text-4xl"
-                  data-case-item
-                  style={{ animationDelay: '90ms' }}
-                >
-                  {project.title}
-                </h3>
-                <p
-                  className="mt-4 max-w-prose2 text-pretty text-sm leading-relaxed text-muted sm:text-base"
-                  data-case-item
-                  style={{ animationDelay: '140ms' }}
-                >
-                  {project.description}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-2" data-case-item style={{ animationDelay: '190ms' }}>
-                  {project.tags.map((t) => (
-                    <Tag key={t}>{t}</Tag>
-                  ))}
-                </div>
-                <div
-                  className="mt-7 flex flex-wrap items-center gap-6"
-                  data-case-item
-                  style={{ animationDelay: '240ms' }}
-                >
-                  {project.link ? (
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      tabIndex={open ? 0 : -1}
-                      className="inline-flex items-center gap-2 font-mono text-xs text-fg transition-colors hover:text-accent"
-                    >
-                      {project.linkLabel} <span aria-hidden>↗</span>
-                    </a>
-                  ) : (
-                    <span className="inline-flex items-center gap-2 font-mono text-xs text-faint">
-                      <span className="h-1.5 w-1.5 rounded-full bg-faint" aria-hidden />
-                      {project.linkLabel}
-                    </span>
-                  )}
-                  {rule ? (
-                    <button
-                      type="button"
-                      tabIndex={open ? 0 : -1}
-                      onClick={() => setRuleOpen((o) => !o)}
-                      aria-expanded={ruleOpen}
-                      aria-controls={panelId}
-                      className="inline-flex items-center gap-2 font-mono text-xs text-muted transition-colors hover:text-accent"
-                    >
-                      <span className="text-accent" aria-hidden>
-                        {ruleOpen ? '▾' : '▸'}
-                      </span>
-                      view detection rule
-                    </button>
-                  ) : null}
-                </div>
+      <div className="mt-auto pt-6">
+        <div className="flex flex-wrap gap-2">
+          {project.tags.map((t) => (
+            <Tag key={t}>{t}</Tag>
+          ))}
+        </div>
+        <div className="mt-6 flex flex-wrap items-center gap-6">
+          {project.link ? (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 font-mono text-xs text-fg transition-colors hover:text-accent"
+            >
+              {project.linkLabel} <span aria-hidden>↗</span>
+            </a>
+          ) : (
+            <span className="inline-flex items-center gap-2 font-mono text-xs text-faint">
+              <span className="h-1.5 w-1.5 rounded-full bg-faint" aria-hidden />
+              {project.linkLabel}
+            </span>
+          )}
+          {rule ? (
+            <button
+              type="button"
+              onClick={() => setRuleOpen((o) => !o)}
+              aria-expanded={ruleOpen}
+              aria-controls={panelId}
+              className="inline-flex items-center gap-2 font-mono text-xs text-muted transition-colors hover:text-accent"
+            >
+              <span className="text-accent" aria-hidden>
+                {ruleOpen ? '▾' : '▸'}
+              </span>
+              detection rule
+            </button>
+          ) : null}
+        </div>
 
-                {rule ? (
-                  <div
-                    id={panelId}
-                    className={`grid transition-[grid-template-rows] duration-500 ease-expo ${
-                      ruleOpen ? 'mt-6 grid-rows-[1fr]' : 'grid-rows-[0fr]'
-                    }`}
-                  >
-                    <div className="min-h-0 overflow-hidden">
-                      <pre className="overflow-x-auto rounded-lg border border-hairline bg-[#0c0b0a] p-4 font-mono text-[0.7rem] leading-relaxed">
-                        {rule.split('\n').map((line, i) => (
-                          <div key={i}>
-                            <RuleLine line={line} />
-                          </div>
-                        ))}
-                      </pre>
-                      <p className="mt-2 font-mono text-[0.62rem] text-faint">
-                        sigma · written by me · would deploy as-is
-                      </p>
-                    </div>
+        {rule ? (
+          <div
+            id={panelId}
+            className={`grid transition-[grid-template-rows] duration-500 ease-expo ${
+              ruleOpen ? 'mt-5 grid-rows-[1fr]' : 'grid-rows-[0fr]'
+            }`}
+          >
+            <div className="min-h-0 overflow-hidden">
+              <pre className="max-h-56 overflow-auto rounded-lg border border-hairline bg-[#0c0b0a] p-4 font-mono text-[0.68rem] leading-relaxed">
+                {rule.split('\n').map((line, i) => (
+                  <div key={i}>
+                    <RuleLine line={line} />
                   </div>
-                ) : null}
-              </div>
-
-              <div
-                className="lg:border-l lg:border-hairline lg:pl-8"
-                data-case-item
-                data-case-parallax
-                style={{ animationDelay: '260ms' }}
-              >
-                <p className="kicker mb-4">evidence</p>
-                <ul className="space-y-2.5">
-                  {highlights.map((h) => (
-                    <li
-                      key={h}
-                      className="flex gap-2.5 font-mono text-xs leading-relaxed text-muted"
-                    >
-                      <span className="mt-0.5 shrink-0 text-accent" aria-hidden>
-                        ▸
-                      </span>
-                      {h}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                ))}
+              </pre>
+              <p className="mt-2 font-mono text-[0.6rem] text-faint">
+                sigma · written by me · would deploy as-is
+              </p>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
-    </li>
+    </article>
   )
 }
 
 /**
- * Selected Work as a triage queue: projects land as dim alert rows and
- * scrolling works the board — each row flickers "working…", then unfolds
- * into its case file. Reduced motion ships everything open and settled.
+ * Selected Work: on desktop the section pins and your scroll drives the case
+ * board sideways — each card is an alert that flips to "triaged" as it takes
+ * the screen. The HUD is six severity dots being cleared, not a counter.
+ * Mobile / reduced motion: native horizontal snap scroller.
  */
 export function Work() {
   const reduced = useReducedMotion()
   const ready = useMotionReady()
-  const rows = useRef<(HTMLLIElement | null)[]>([])
-  const timers = useRef<number[]>([])
+  const pin = useRef<HTMLDivElement>(null)
+  const track = useRef<HTMLDivElement>(null)
+  const total = PROJECTS.length
+  const [current, setCurrent] = useState(reduced ? total - 1 : 0)
   const animate = !reduced
-  const [phases, setPhases] = useState<Phase[]>(() =>
-    PROJECTS.map(() => (animate ? 'queued' : 'triaged')),
-  )
-
-  // The queue is worked like a real one: scroll makes rows eligible, but an
-  // "analyst" processes them strictly one at a time, in order — so the
-  // working→triaged beat is visible even if all rows enter view at once.
-  const phasesRef = useRef(phases)
-  phasesRef.current = phases
-  const eligible = useRef<boolean[]>(PROJECTS.map(() => false))
-  const busy = useRef(false)
-
-  const pump = () => {
-    if (busy.current) return
-    const i = phasesRef.current.findIndex((p, idx) => p === 'queued' && eligible.current[idx])
-    if (i < 0) return
-    busy.current = true
-    setPhases((prev) => {
-      const next = [...prev]
-      next[i] = 'working'
-      return next
-    })
-    timers.current.push(
-      window.setTimeout(() => {
-        setPhases((prev) => {
-          const next = [...prev]
-          next[i] = 'triaged'
-          return next
-        })
-        timers.current.push(
-          window.setTimeout(() => {
-            busy.current = false
-            pump()
-          }, 70),
-        )
-      }, 230),
-    )
-  }
 
   useGSAP(
     () => {
       if (!animate || !ready) return
-      rows.current.forEach((el, i) => {
-        if (!el) return
-        ScrollTrigger.create({
-          trigger: el,
-          start: 'top 85%',
-          once: true,
-          onEnter: () => {
-            eligible.current[i] = true
-            pump()
+      const pinEl = pin.current
+      const trackEl = track.current
+      if (!pinEl || !trackEl) return
+
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 768px)', () => {
+        const dist = () => Math.max(0, trackEl.scrollWidth - window.innerWidth)
+
+        const tween = gsap.to(trackEl, {
+          x: () => -dist(),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: pinEl,
+            start: 'top top',
+            end: () => '+=' + dist() * 1.15,
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              // which case holds the screen right now
+              setCurrent(Math.min(total - 1, Math.round(self.progress * (total - 1))))
+            },
           },
         })
 
-        // Scroll-scrubbed drift: the evidence column and ghost numeral move
-        // against the scroll while a card is on screen — the section stays
-        // kinetic after the unfold. Column drift is desktop-only: when the
-        // grid stacks, translating the evidence block overlaps the links.
-        const lg = window.matchMedia('(min-width: 1024px)').matches
-        const drift = el.querySelector('[data-case-parallax]')
-        if (drift && lg) {
-          gsap.fromTo(
-            drift,
-            { y: 36 },
-            {
-              y: -36,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: el,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: true,
-                invalidateOnRefresh: true,
-              },
+        // Each card rides in from the right with depth — y-drift, tilt and
+        // fade scrubbed by the horizontal ride itself.
+        gsap.utils.toArray<HTMLElement>('[data-work-card]', trackEl).forEach((card) => {
+          gsap.from(card, {
+            y: 90,
+            opacity: 0.08,
+            rotate: 2.2,
+            immediateRender: false,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: card,
+              containerAnimation: tween,
+              start: 'left 100%',
+              end: 'left 52%',
+              scrub: true,
             },
-          )
-        }
-        const ghost = el.querySelector('[data-case-ghost]')
-        if (ghost) {
-          gsap.fromTo(
-            ghost,
-            { yPercent: 26 },
-            {
-              yPercent: -18,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: el,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: true,
-                invalidateOnRefresh: true,
-              },
-            },
-          )
+          })
+        })
+
+        // Mark the section for pinned styling only while the ride exists.
+        pinEl.classList.add('is-pinned')
+        return () => {
+          pinEl.classList.remove('is-pinned')
         }
       })
+      return () => mm.revert()
     },
     { dependencies: [ready, animate] },
   )
 
-  // Card expansions change the page's geometry — re-measure every trigger on
-  // the page once the queue is fully worked.
-  const allDone = phases.every((p) => p === 'triaged')
-  useEffect(() => {
-    if (!allDone || !animate) return
-    const id = window.setTimeout(() => ScrollTrigger.refresh(), 1100)
-    return () => window.clearTimeout(id)
-  }, [allDone, animate])
-
-  useEffect(() => {
-    const t = timers.current
-    return () => t.forEach((id) => window.clearTimeout(id))
-  }, [])
-
-  const openCount = phases.filter((p) => p !== 'triaged').length
-
   return (
-    <section id="work" className="px-gutter py-section">
-      <div className="mx-auto max-w-content">
-        <SectionHeader
-          index="/ 03"
-          label="Selected Work"
-          title="Systems that watch the systems."
-          description="Six cases on the board. Scroll works the queue — each alert opens into the project behind it, detection rule included."
-        />
-
-        <div className="mt-8 flex items-center gap-3 font-mono text-xs text-faint" aria-hidden>
-          <span className={openCount ? 'text-accent' : 'text-data'}>
-            {openCount ? `queue: ${String(openCount).padStart(2, '0')} open` : 'queue clear ✓'}
-          </span>
-          <span className="h-px flex-1 bg-hairline" />
+    <section id="work" className="py-section" data-work>
+      <div ref={pin} className="md:flex md:min-h-screen md:flex-col md:justify-center md:overflow-hidden">
+        <div className="px-gutter">
+          <div className="mx-auto max-w-content">
+            <SectionHeader
+              index="/ 03"
+              label="Selected Work"
+              title="Systems that watch the systems."
+              description="Six cases on the board. Scroll rides the queue — every alert gets triaged, detection rules included."
+            />
+            {/* triage board HUD — six alerts being cleared, desktop ride only */}
+            <div className="mt-8 hidden items-center gap-4 md:flex" aria-hidden>
+              <span className="flex items-center gap-2">
+                {PROJECTS.map((p, i) => (
+                  <span
+                    key={p.id}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      i < current
+                        ? 'w-1.5 bg-data'
+                        : i === current
+                          ? 'w-6 bg-accent'
+                          : `w-1.5 ${SEVERITY[p.severity].dot} opacity-40`
+                    }`}
+                  />
+                ))}
+              </span>
+              <span className="font-mono text-xs text-faint">
+                <span className="text-accent">ALR-{PROJECTS[current].id}</span> on screen ·{' '}
+                <span className={current === total - 1 ? 'text-data' : 'text-faint'}>
+                  {current === total - 1 ? 'queue clear ✓' : `${total - 1 - current} in queue`}
+                </span>
+              </span>
+            </div>
+          </div>
         </div>
 
-        <ol className="mt-4 border-t border-hairline">
-          {PROJECTS.map((p, i) => (
-            <CaseCard
-              key={p.id}
-              project={p}
-              phase={phases[i]}
-              innerRef={(el) => {
-                rows.current[i] = el
-              }}
-            />
-          ))}
-        </ol>
+        <div className="relative">
+          <div
+            ref={track}
+            data-work-track
+            role="list"
+            aria-label="Selected work"
+            className="mt-14 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-10 md:snap-none md:overflow-visible md:pb-0"
+            style={TRACK_PADDING}
+          >
+            {PROJECTS.map((p, i) => (
+              <CaseCard key={p.id} project={p} worked={!animate || i <= current} />
+            ))}
+          </div>
+          {/* affordance: hint that the track continues (mobile scroller only) */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-canvas to-transparent md:hidden"
+          />
+        </div>
       </div>
     </section>
   )

@@ -165,81 +165,14 @@
   width: 100%;
 }
 
-/* Triage queue — a case row's body unfolds from the queue line when the row
-   is "worked" (scrolled to). grid-template-rows keeps it height-auto safe. */
-.case-row {
-  border-bottom: 1px solid rgb(var(--hairline) / 0.08);
-}
-.case-row.is-worked {
-  border-bottom-color: transparent;
-}
-.case-body {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition: grid-template-rows 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease 0.05s;
-}
-.case-row.is-worked .case-body {
-  grid-template-rows: 1fr;
-  opacity: 1;
-}
-/* the card itself lands with a rise + settle */
-/* `backwards` (not `both`) so the finished animation releases transform/opacity
-   back to the hover-lift transition and GSAP parallax. */
-.case-row.is-worked .case-card {
-  animation: case-unfold 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-}
-@keyframes case-unfold {
-  from {
-    opacity: 0;
-    transform: translateY(34px) scale(0.975);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-/* case-file contents rise in one by one once the row is worked (pure CSS —
-   survives React remounts/HMR where a JS tween would not) */
-.case-card [data-case-item] {
-  opacity: 0;
-}
-.case-row.is-worked [data-case-item] {
-  opacity: 1;
-  animation: case-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-}
-@keyframes case-rise {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .case-card [data-case-item] {
-    opacity: 1;
-  }
-}
-
-/* the case-file card lifts on hover like a real object */
-.case-card {
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease,
-    box-shadow 0.45s ease;
+/* Work case cards — hover lift on the ride. The scrubbed drift-in owns the
+   transform while riding, so the lift is border/glow only. */
+[data-work-card] {
+  transition: border-color 0.5s ease, box-shadow 0.45s ease;
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .case-card:hover {
-    transform: translateY(-5px);
-    border-color: rgb(240 133 58 / 0.35);
+  [data-work-card]:hover {
     box-shadow: 0 24px 60px -28px rgba(240, 133, 58, 0.35);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .case-body {
-    grid-template-rows: 1fr;
-    opacity: 1;
   }
 }
 
